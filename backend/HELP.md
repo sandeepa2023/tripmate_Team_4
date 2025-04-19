@@ -1,6 +1,7 @@
 # Getting Started
 
-### Reference Documentation
+## Reference Documentation
+
 For further reference, please consider the following sections:
 
 * [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
@@ -12,7 +13,8 @@ For further reference, please consider the following sections:
 * [Spring Security](https://docs.spring.io/spring-boot/3.4.4/reference/web/spring-security.html)
 * [Java Mail Sender](https://docs.spring.io/spring-boot/3.4.4/reference/io/email.html)
 
-### Guides
+## Guides
+
 The following guides illustrate how to use some features concretely:
 
 * [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)

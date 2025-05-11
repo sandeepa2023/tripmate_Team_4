@@ -1,35 +1,36 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Routes, Route } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import { Toaster } from "@/components/ui/toaster";
+import HomePage from '@/pages/HomePage';
+import SignInPage from '@/pages/auth/SignInPage';
+import SignUpPage from '@/pages/auth/SignUpPage';
+import AuthLayout from '@/pages/auth/AuthLayout';
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export default function App() {
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <Helmet>
+        <title>TripMate - Your AI Guide to Sri Lanka</title>
+        <meta name="description" content="Plan your perfect Sri Lankan adventure with TripMate, your personal AI travel assistant." />
+        <link rel="icon" href="/favicon.ico" /> {/* Example, assuming favicon.ico is in public */}
+      </Helmet>
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route element={<AuthLayout />}>
+              <Route path="/auth/signin" element={<SignInPage />} />
+              <Route path="/auth/signup" element={<SignUpPage />} />
+            </Route>
+            {/* Add other routes here */}
+          </Routes>
+        </main>
+        <Footer />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Toaster />
     </>
-  )
+  );
 }
-
-export default App

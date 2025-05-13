@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>TripMate - Create Trip</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .form-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .button {
+            padding: 12px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        .add-stop-button {
+            background-color: #2196F3;
+        }
+        .nav-button {
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            background-color: #555;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/home" class="nav-button">← Back to Home</a>
+        
+        <h1>Create a New Trip</h1>
+        
+        <div class="form-container">
+            <form id="tripForm">
+                <div class="form-group">
+                    <label for="startLocation">Starting Location:</label>
+                    <input type="text" id="startLocation" name="startLocation" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="endLocation">Destination:</label>
+                    <input type="text" id="endLocation" name="endLocation" required>
+                </div>
+                
+                <div id="stopsContainer">
+                    <div class="form-group">
+                        <label for="stop1">Stop 1:</label>
+                <button type="button" class="button add-stop-button" onclick="addStop()">+ Add Another Stop</button>
+                    </div>
+                </div>
+                
+                <button type="button" class="button" onclick="addStop()" style="background-color: #2196F3;">+ Add Another Stop</button>
+                
+                <div class="form-group">
+                    <label for="travelers">Number of Travelers:</label>
+                    <input type="number" id="travelers" name="travelers" min="1" value="1" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="startDate">Start Date:</label>
+                    <input type="date" id="startDate" name="startDate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="endDate">End Date:</label>
+                    <input type="date" id="endDate" name="endDate" required>
+                </div>
+                
+                <button type="submit" class="button">Create Trip</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        let stopCount = 1;
+        
+        function addStop() {
+            stopCount++;
+            const stopsContainer = document.getElementById('stopsContainer');
+            
+            const stopDiv = document.createElement('div');
+            stopDiv.className = 'form-group';
+            
+            stopDiv.innerHTML = `
+                <label for="stop${stopCount}">Stop ${stopCount}:</label>
+                <input type="text" id="stop${stopCount}" name="stops[]">
+            `;
+            
+            stopsContainer.appendChild(stopDiv);
+        }
+        
+        document.getElementById('tripForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Collect form data
+            const formData = {
+                startLocation: document.getElementById('startLocation').value,
+                endLocation: document.getElementById('endLocation').value,
+                numberOfTravelers: parseInt(document.getElementById('travelers').value),
+                startDate: document.getElementById('startDate').value,
+                endDate: document.getElementById('endDate').value,
+                stops: []
+            };
+            
+            // Collect all stops
+            const stopInputs = document.querySelectorAll('input[name="stops[]"]');
+            stopInputs.forEach(input => {
+                if (input.value.trim()) {
+                    formData.stops.push(input.value.trim());
+                }
+            });
+            
+            // Here you would typically send this data to your backend
+            console.log('Trip data:', formData);
+            alert('Trip created successfully! (This is a placeholder - actual data would be sent to the server)');
+        });
+    </script>
+</body>
+</html>

@@ -1,15 +1,21 @@
-package com.tripmate.SpringOAuth2;
+package com.tripmate.SpringOAuth2.controllers;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import java.util.Map;
+import java.util.HashMap;
 
-@RestController
+@Controller
 public class HelloController {
 
     @GetMapping("/")
-    public String hello() {
-        return "Hello, authenticated user!";
+    public String root() {
+        return "redirect:/home";
     }
 
-
+    @GetMapping("/trips")
+    public String trips() {
+        return "trips";
+    }
 }

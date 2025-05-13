@@ -16,8 +16,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(requests -> requests
                 .anyRequest().authenticated()
             )
-            // .oauth2Login(oauth2Login -> oauth2Login.defaultSuccessUrl("/"))
-            .oauth2Login(oauth2Login -> oauth2Login.defaultSuccessUrl("/showmap", true))
+            .oauth2Login(oauth2Login -> oauth2Login.defaultSuccessUrl("/home", true))
             .build();
     }
 }

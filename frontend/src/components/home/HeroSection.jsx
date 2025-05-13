@@ -1,6 +1,6 @@
-
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom"; // Changed from next/link
+import { Link } from "react-router-dom";
+import { HashLink } from 'react-router-hash-link';
 
 export default function HeroSection() {
   return (
@@ -17,23 +17,23 @@ export default function HeroSection() {
             Plan your dream Sri Lankan getaway in minutes. Get personalized itineraries, discover hidden gems, and explore the island like never before.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-            <Link to="/auth/signup"> {/* Changed from href, passHref removed */}
-              <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground w-full sm:w-auto shadow-lg transform hover:scale-105 transition-transform duration-200">
+            <Link to="/auth/signup">
+              <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
                 Start Planning for Free
               </Button>
             </Link>
-            <Link to="/#how-it-works"> {/* Changed from href, passHref removed, ensure this ID exists on the page */}
-              <Button size="lg" variant="outline" className="w-full sm:w-auto shadow-md hover:bg-primary/10 transition-colors duration-200">
+            <HashLink smooth to="/#how-it-works">
+              <Button size="lg" variant="outline" className="hover:bg-primary/10">
                 Learn More
               </Button>
-            </Link>
+            </HashLink>
           </div>
         </div>
         <div className="relative aspect-video md:aspect-square rounded-xl overflow-hidden shadow-2xl group">
-            <img // Changed from next/image
+            <img
               src="https://picsum.photos/seed/srilanka-hero/800/600"
               alt="Beautiful Sri Lankan Landscape"
-              className="transform group-hover:scale-105 transition-transform duration-500 ease-in-out object-cover w-full h-full" // Added object-cover, w-full, h-full
+              className="transform group-hover:scale-105 transition-transform duration-500 ease-in-out object-cover w-full h-full"
               data-ai-hint="Sri Lanka landscape"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>

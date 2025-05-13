@@ -1,41 +1,113 @@
-
-import { Link } from "react-router-dom"; // Changed from next/link
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, MountainIcon } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { Link } from 'react-router-dom';
+import { HashLink } from 'react-router-hash-link';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Menu, MountainIcon, UserIcon, LogOut } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { useAuth } from '@/context/AuthContext';
+import { useState, useRef, useEffect } from "react";
 
 const navItems = [
-  { label: "Features", href: "/#features" }, // Adjusted for potential hash linking
-  { label: "How it Works", href: "/#how-it-works" },
-  { label: "Destinations", href: "/#destinations" },
-  { label: "Blog", href: "/#blog" }, // Placeholder, adjust if it's a separate page
+  { label: 'Features', href: '/#features', isHash: true },
+  { label: 'How it Works', href: '/#how-it-works', isHash: true },
+  { label: 'Destinations', href: '/#destinations', isHash: true },
+  { label: 'Blog', href: '/blog', isHash: false },
 ];
 
 export default function Header() {
   const isMobile = useIsMobile();
+  const { isAuthenticated, logout } = useAuth();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const NavLink = ({ item }) => {
+    if (item.isHash) {
+      return (
+        <HashLink
+          smooth
+          to={item.href}
+          className="text-sm font-medium hover:text-primary"
+        >
+          {item.label}
+        </HashLink>
+      );
+    }
+    return (
+      <Link
+        to={item.href}
+        className="text-sm font-medium hover:text-primary"
+      >
+        {item.label}
+      </Link>
+    );
+  };
 
   const DesktopNav = () => (
     <nav className="hidden md:flex gap-6 items-center">
-      {navItems.map((item) => (
-        <Link
-          key={item.label}
-          to={item.href} // Changed from href
-          className="text-sm font-medium hover:text-primary transition-colors"
-        >
-          {item.label}
-        </Link>
+      {navItems.map(item => (
+        <NavLink key={item.label} item={item} />
       ))}
-      <Link to="/auth/signin"> {/* Changed from href, passHref removed */}
-        <Button variant="ghost" size="sm">
-          Sign In
-        </Button>
-      </Link>
-      <Link to="/auth/signup"> {/* Changed from href, passHref removed */}
-        <Button variant="default" size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground">
-          Sign Up
-        </Button>
-      </Link>
+
+      {!isAuthenticated ? (
+        <>
+          <Link to="/auth/signin"><Button variant="ghost" size="sm">Sign In</Button></Link>
+          <Link to="/auth/signup">
+            <Button variant="default" size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground">
+              Sign Up
+            </Button>
+          </Link>
+        </>
+      ) : (
+        <>
+          <Link to="/dashboard"><Button variant="ghost" size="sm">Dashboard</Button></Link>
+          <Link to="/features"><Button variant="ghost" size="sm">Premium</Button></Link>
+          <div className="relative" ref={dropdownRef}>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="flex items-center gap-1"
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            >
+              <UserIcon className="h-4 w-4" /> Account
+            </Button>
+            <ul className={`absolute right-0 mt-2 w-40 bg-card shadow-lg rounded border ${
+              isDropdownOpen ? 'block' : 'hidden'
+            }`}>
+              <li>
+                <Link
+                  to="/account"
+                  className="flex items-center gap-2 px-4 py-2 hover:bg-accent/10"
+                  onClick={() => setIsDropdownOpen(false)}
+                >
+                  <UserIcon className="h-4 w-4" /> Profile
+                </Link>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    setIsDropdownOpen(false);
+                    logout();
+                  }}
+                  className="w-full flex items-center gap-2 px-4 py-2 hover:bg-accent/10"
+                >
+                  <LogOut className="h-4 w-4" /> Sign Out
+                </button>
+              </li>
+            </ul>
+          </div>
+        </>
+      )}
     </nav>
   );
 
@@ -49,34 +121,48 @@ export default function Header() {
       </SheetTrigger>
       <SheetContent side="right">
         <div className="grid gap-4 p-4">
-          <Link to="/" className="flex items-center gap-2 font-semibold text-lg text-primary"> {/* Changed from href */}
+          <Link to="/" className="flex items-center gap-2 font-semibold text-lg text-primary">
             <MountainIcon className="h-6 w-6 text-primary" />
             <span>TripMate</span>
           </Link>
-          {navItems.map((item) => (
-            <Link
-              key={item.label}
-              to={item.href} // Changed from href
-              className="text-sm font-medium hover:text-primary transition-colors"
-            >
-              {item.label}
-            </Link>
+          {navItems.map(item => (
+            <NavLink key={item.label} item={item} />
           ))}
-          <Link to="/auth/signin"> {/* Changed from href, passHref removed */}
-            <Button variant="outline" className="w-full">Sign In</Button>
-          </Link>
-          <Link to="/auth/signup"> {/* Changed from href, passHref removed */}
-            <Button variant="default" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">Sign Up</Button>
-          </Link>
+
+          {!isAuthenticated ? (
+            <>
+              <Link to="/auth/signin"><Button variant="outline" className="w-full">Sign In</Button></Link>
+              <Link to="/auth/signup">
+                <Button variant="default" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
+                  Sign Up
+                </Button>
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link to="/dashboard"><Button variant="outline" className="w-full">Dashboard</Button></Link>
+              <Link to="/features"><Button variant="outline" className="w-full">Premium</Button></Link>
+              <Link to="/account">
+                <Button variant="outline" className="w-full flex items-center gap-2">
+                  <UserIcon className="h-4 w-4" /> Account
+                </Button>
+              </Link>
+              <button onClick={logout}>
+                <Button variant="outline" className="w-full flex items-center gap-2">
+                  <LogOut className="h-4 w-4" /> Sign Out
+                </Button>
+              </button>
+            </>
+          )}
         </div>
       </SheetContent>
     </Sheet>
   );
-  
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-        <Link to="/" className="flex items-center gap-2"> {/* Changed from href */}
+        <Link to="/" className="flex items-center gap-2">
           <MountainIcon className="h-6 w-6 text-primary" />
           <span className="font-semibold text-lg text-primary">TripMate</span>
         </Link>

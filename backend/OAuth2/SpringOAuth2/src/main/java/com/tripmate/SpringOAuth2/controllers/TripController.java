@@ -13,7 +13,6 @@ import java.util.Map;
 @RequestMapping("/api/trips") 
 public class TripController {
 
-    // In a real application, you'd use a database or service
     private final List<Trip> trips = new ArrayList<>(); // for now i save the trips in this array. but will add to a db later
 
     @PostMapping

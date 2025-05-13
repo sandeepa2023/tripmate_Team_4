@@ -28,16 +28,28 @@ export default function SignUpForm() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: { fullName: '', email: '', password: '' },
   });
 
   async function onSubmit() {
-    // stub: simulate successful sign-up + auto-login
-    login();
-    toast({ title: 'Signed up (stubbed)' });
-    navigate('/dashboard');
+    try {
+      // stub: simulate successful sign-up
+      login();
+      toast({ 
+        title: 'Welcome to TripMate!',
+        description: 'Your account has been created successfully.'
+      });
+      navigate('/'); // Changed from /dashboard to /
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to create account. Please try again.',
+        variant: 'destructive'
+      });
+    }
   }
 
   return (

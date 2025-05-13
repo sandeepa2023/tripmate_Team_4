@@ -1,8 +1,8 @@
-
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom"; // Changed from next/link
 import { MoveRight } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 const destinations = [
   {
@@ -32,6 +32,8 @@ const destinations = [
 ];
 
 export default function DestinationsSection() {
+  const { isAuthenticated } = useAuth();
+
   return (
     <section id="destinations" className="w-full py-16 md:py-24 lg:py-32 bg-muted/50">
       <div className="container mx-auto px-4 md:px-6">
@@ -69,9 +71,9 @@ export default function DestinationsSection() {
           ))}
         </div>
         <div className="text-center mt-12">
-          <Link to="/auth/signup"> {/* Changed from href, passHref removed */}
+          <Link to={isAuthenticated ? "/dashboard" : "/auth/signup"}>
             <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground shadow-md">
-              Discover More Destinations
+              {isAuthenticated ? "Plan Your Trip" : "Discover More Destinations"}
             </Button>
           </Link>
         </div>

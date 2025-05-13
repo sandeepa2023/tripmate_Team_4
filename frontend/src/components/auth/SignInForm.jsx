@@ -27,16 +27,28 @@ export default function SignInForm() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: { email: '', password: '' },
   });
 
   async function onSubmit() {
-    // stub: simulate successful sign-in
-    login();
-    toast({ title: 'Signed in (stubbed)' });
-    navigate('/dashboard');
+    try {
+      // stub: simulate successful sign-in
+      login();
+      toast({ 
+        title: 'Welcome back!',
+        description: 'Successfully signed in to TripMate.'
+      });
+      navigate('/'); // Changed from /dashboard to /
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to sign in. Please try again.',
+        variant: 'destructive'
+      });
+    }
   }
 
   return (

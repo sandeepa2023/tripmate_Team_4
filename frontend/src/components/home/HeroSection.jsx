@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { HashLink } from 'react-router-hash-link';
+import { useAuth } from "@/context/AuthContext";
 
 export default function HeroSection() {
+  const { isAuthenticated } = useAuth();
+
   return (
     <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-br from-primary/10 via-background to-background">
       <div className="container mx-auto px-4 md:px-6 grid gap-8 md:grid-cols-2 items-center">
@@ -17,9 +20,9 @@ export default function HeroSection() {
             Plan your dream Sri Lankan getaway in minutes. Get personalized itineraries, discover hidden gems, and explore the island like never before.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-            <Link to="/auth/signup">
+            <Link to={isAuthenticated ? "/dashboard" : "/auth/signup"}>
               <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
-                Start Planning for Free
+                {isAuthenticated ? "Go to Dashboard" : "Start Planning for Free"}
               </Button>
             </Link>
             <HashLink smooth to="/#how-it-works">

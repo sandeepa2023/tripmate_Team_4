@@ -165,7 +165,7 @@ public class GeminiAIService {
      */
     private String buildAnalysisPrompt(List<Trip> trips) {
         StringBuilder promptBuilder = new StringBuilder();
-        promptBuilder.append("As a travel analytics expert, please analyze the following trip data and provide insights:\n\n");
+        promptBuilder.append("As a travel analytics expert, analyze the following trip data and PROVIDE ONLY THE RECOMMENDED TOURIST LOCATIONS SEPARATED BY $ CHARACTER. DO NOT PROVIDE ANY OTHER TEXT OR EXPLANATION.\n\n");
         
         for (int i = 0; i < trips.size(); i++) {
             Trip trip = trips.get(i);
@@ -186,8 +186,10 @@ public class GeminiAIService {
                         .append(trip.getEndDate()).append(")\n\n");
         }
         
-        promptBuilder.append("Based on this data, please provide travel insights and recommendations.");
+        promptBuilder.append("IMPORTANT: Respond ONLY with the recommended tourist locations separated by '$'. DO NOT include any headings, explanations, or extra text.\n");
         
         return promptBuilder.toString();
     }
 }
+
+

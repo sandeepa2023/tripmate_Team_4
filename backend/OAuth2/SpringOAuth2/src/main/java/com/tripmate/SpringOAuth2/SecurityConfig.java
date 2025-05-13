@@ -17,6 +17,7 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2Login -> oauth2Login.defaultSuccessUrl("/home", true))
+            .csrf(csrf -> csrf.disable()) 
             .build();
     }
 }

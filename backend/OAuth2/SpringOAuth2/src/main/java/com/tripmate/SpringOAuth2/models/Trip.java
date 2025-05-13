@@ -2,26 +2,34 @@ package com.tripmate.SpringOAuth2.models;
 
 import java.time.LocalDate;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class Trip {
     private String startLocation;
     private List<String> stops;
     private String endLocation;
     private int numberOfTravelers;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
+
+    private double budget; 
 
     public Trip() {
     }
 
     public Trip(String startLocation, List<String> stops, String endLocation, int numberOfTravelers, 
-               LocalDate startDate, LocalDate endDate) {
+               LocalDate startDate, LocalDate endDate, double budget) {
         this.startLocation = startLocation;
         this.stops = stops;
         this.endLocation = endLocation;
         this.numberOfTravelers = numberOfTravelers;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.budget = budget;
     }
 
     public String getStartLocation() {
@@ -70,5 +78,13 @@ public class Trip {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+    
+    public double getBudget() {
+        return budget;
+    }
+    
+    public void setBudget(double budget) {
+        this.budget = budget;
     }
 }

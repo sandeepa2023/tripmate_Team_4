@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang = "en">
 <head>
     <title>TripMate - Create Trip</title>
     <meta charset="UTF-8">
@@ -60,10 +60,6 @@
         .button:hover {
             background-color: #45a049;
         }
-
-        .add-stop-button {
-            background-color: #2196F3;
-        }
         .nav-button {
             padding: 10px 15px;
             margin-bottom: 20px;
@@ -73,6 +69,32 @@
             border-radius: 4px;
             text-decoration: none;
             display: inline-block;
+        }
+        .stops-container {
+            margin-bottom: 20px;
+        }
+        .stop-entry {
+            display: flex;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        .stop-entry input {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+        .remove-stop {
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        .success-message {
+            color: #4CAF50;
+            margin-top: 20px;
+            font-weight: bold;
+            display: none;
         }
     </style>
 </head>
@@ -86,26 +108,32 @@
             <form id="tripForm">
                 <div class="form-group">
                     <label for="startLocation">Starting Location:</label>
-                    <input type="text" id="startLocation" name="startLocation" required>
+                    <input type="text" id="startLocation" name="startLocation" placeholder="Enter your starting point" required>
                 </div>
                 
-                <div class="form-group">
-                    <label for="endLocation">Destination:</label>
-                    <input type="text" id="endLocation" name="endLocation" required>
-                </div>
-                
-                <div id="stopsContainer">
-                    <div class="form-group">
-                        <label for="stop1">Stop 1:</label>
-                <button type="button" class="button add-stop-button" onclick="addStop()">+ Add Another Stop</button>
+                <div class="stops-container" id="stopsContainer">
+                    <label>Stops Along the Way:</label>
+                    <div class="stop-entry">
+                        <input type="text" name="stops[]" placeholder="Enter stop 1 (optional)">
+                        <button type="button" class="remove-stop" onclick="removeStop(this)" style="visibility: hidden;">Remove</button>
                     </div>
                 </div>
                 
                 <button type="button" class="button" onclick="addStop()" style="background-color: #2196F3;">+ Add Another Stop</button>
                 
                 <div class="form-group">
+                    <label for="endLocation">Final Destination:</label>
+                    <input type="text" id="endLocation" name="endLocation" placeholder="Enter your destination" required>
+                </div>
+                
+                <div class="form-group">
                     <label for="travelers">Number of Travelers:</label>
                     <input type="number" id="travelers" name="travelers" min="1" value="1" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="budget">Budget for Trip ($):</label>
+                    <input type="number" id="budget" name="budget" min="0" step="0.01" placeholder="Enter your budget" required>
                 </div>
                 
                 <div class="form-group">
@@ -118,29 +146,66 @@
                     <input type="date" id="endDate" name="endDate" required>
                 </div>
                 
-                <button type="submit" class="button">Create Trip</button>
+                <button type="submit" class="button">Save Trip</button>
             </form>
+            
+            <div id="successMessage" class="success-message">
+                Trip saved successfully!
+            </div>
         </div>
     </div>
     
     <script>
-        let stopCount = 1;
+        // Set default dates (today and tomorrow)
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
         
+        document.getElementById('startDate').valueAsDate = today;
+        document.getElementById('endDate').valueAsDate = tomorrow;
+        
+        // Function to add a new stop
         function addStop() {
-            stopCount++;
             const stopsContainer = document.getElementById('stopsContainer');
+            const stopEntries = stopsContainer.querySelectorAll('.stop-entry');
+            const newStopNumber = stopEntries.length + 1;
             
             const stopDiv = document.createElement('div');
-            stopDiv.className = 'form-group';
+            stopDiv.className = 'stop-entry';
             
             stopDiv.innerHTML = `
-                <label for="stop${stopCount}">Stop ${stopCount}:</label>
-                <input type="text" id="stop${stopCount}" name="stops[]">
+                <input type="text" name="stops[]" placeholder="Enter stop ${newStopNumber} (optional)">
+                <button type="button" class="remove-stop" onclick="removeStop(this)">Remove</button>
             `;
             
             stopsContainer.appendChild(stopDiv);
+            
+            // Show the first remove button if we now have more than one stop
+            if (newStopNumber === 2) {
+                document.querySelector('.remove-stop').style.visibility = 'visible';
+            }
         }
         
+        // Function to remove a stop
+        function removeStop(button) {
+            const stopEntry = button.parentNode;
+            const stopsContainer = document.getElementById('stopsContainer');
+            stopsContainer.removeChild(stopEntry);
+            
+            // Update placeholder numbers
+            const stopEntries = stopsContainer.querySelectorAll('.stop-entry');
+            stopEntries.forEach((entry, index) => {
+                const input = entry.querySelector('input');
+                input.placeholder = `Enter stop ${index + 1} (optional)`;
+            });
+            
+            // Hide the remove button on the first stop if we only have one stop left
+            if (stopEntries.length === 1) {
+                stopEntries[0].querySelector('.remove-stop').style.visibility = 'hidden';
+            }
+        }
+        
+        // Form submission handler
         document.getElementById('tripForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -151,10 +216,11 @@
                 numberOfTravelers: parseInt(document.getElementById('travelers').value),
                 startDate: document.getElementById('startDate').value,
                 endDate: document.getElementById('endDate').value,
+                budget: parseFloat(document.getElementById('budget').value),
                 stops: []
             };
             
-            // Collect all stops
+            // Collect all stops (filtering out empty ones)
             const stopInputs = document.querySelectorAll('input[name="stops[]"]');
             stopInputs.forEach(input => {
                 if (input.value.trim()) {
@@ -162,9 +228,50 @@
                 }
             });
             
-            // Here you would typically send this data to your backend
-            console.log('Trip data:', formData);
-            alert('Trip created successfully! (This is a placeholder - actual data would be sent to the server)');
+            console.log("Sending data to /api/trips:", formData);
+
+            // Send data to the API endpoint
+            fetch('/api/trips', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success:', data);
+                document.getElementById('successMessage').style.display = 'block';
+                document.getElementById('tripForm').reset();
+                
+                // Reset the form and stops
+                document.getElementById('startDate').valueAsDate = today;
+                document.getElementById('endDate').valueAsDate = tomorrow;
+                
+                // Remove all stops except the first one
+                const stopsContainer = document.getElementById('stopsContainer');
+                const stopEntries = stopsContainer.querySelectorAll('.stop-entry');
+                for (let i = stopEntries.length - 1; i > 0; i--) {
+                    stopsContainer.removeChild(stopEntries[i]);
+                }
+                
+                // Reset the first stop's remove button visibility
+                document.querySelector('.remove-stop').style.visibility = 'hidden';
+                
+                // Hide success message after 3 seconds
+                setTimeout(() => {
+                    document.getElementById('successMessage').style.display = 'none';
+                }, 3000);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to create trip. Please try again.');
+            });
         });
     </script>
 </body>

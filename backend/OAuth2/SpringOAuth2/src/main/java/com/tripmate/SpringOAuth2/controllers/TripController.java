@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/home/trips")
+@RequestMapping("/api/trips") 
 public class TripController {
 
     // In a real application, you'd use a database or service
@@ -26,6 +26,7 @@ public class TripController {
         
         // In a real application, you'd save to a database
         trips.add(trip);
+        System.out.println("Trip added successfully. Total trips: " + trips.size());
         return ResponseEntity.ok(trip);
     }
 
@@ -41,4 +42,14 @@ public class TripController {
         }
         return ResponseEntity.ok(trips.get(index));
     }
+    
+    // Helper endpoint to check all saved trips (for debugging)
+    @GetMapping("/debug")
+    public ResponseEntity<Map<String, Object>> debugTrips() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("count", trips.size());
+        response.put("trips", trips);
+        return ResponseEntity.ok(response);
+    }
+
 }

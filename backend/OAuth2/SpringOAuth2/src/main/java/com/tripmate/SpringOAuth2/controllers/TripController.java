@@ -50,5 +50,4 @@ public class TripController {
         response.put("trips", trips);
         return ResponseEntity.ok(response);
     }
-
 }

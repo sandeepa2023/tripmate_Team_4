@@ -1,6 +1,7 @@
 package com.tripmate.SpringOAuth2.services;
 
 import com.tripmate.SpringOAuth2.models.Trip;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +23,12 @@ public class GeminiAIService {
     @Value("${gemini.api.key:AIzaSyAs-T5A3A8I8BwlvS0yMn4d4F9drh0LFdo}")
     private String apiKey;
 
-    @Value("${gemini.model.name:gemini-2.0-flash}")
+    @Value("${gemini.model.name:gemini-pro}")
     private String modelName;
     
     private final WebClient webClient;
     
+    @Autowired
     public GeminiAIService(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder.baseUrl("https://generativelanguage.googleapis.com/v1beta").build();
     }
@@ -165,7 +168,7 @@ public class GeminiAIService {
      */
     private String buildAnalysisPrompt(List<Trip> trips) {
         StringBuilder promptBuilder = new StringBuilder();
-        promptBuilder.append("As a travel analytics expert, analyze the following trip data and PROVIDE ONLY THE RECOMMENDED TOURIST LOCATIONS SEPARATED BY $ CHARACTER. DO NOT PROVIDE ANY OTHER TEXT OR EXPLANATION.\n\n");
+        promptBuilder.append("As a travel analytics expert, please analyze the following trip data and provide insights:\n\n");
         
         for (int i = 0; i < trips.size(); i++) {
             Trip trip = trips.get(i);
@@ -186,10 +189,8 @@ public class GeminiAIService {
                         .append(trip.getEndDate()).append(")\n\n");
         }
         
-        promptBuilder.append("IMPORTANT: Respond ONLY with the recommended tourist locations separated by '$'. DO NOT include any headings, explanations, or extra text.\n");
+        promptBuilder.append("Based on this data, please provide travel insights and recommendations.");
         
         return promptBuilder.toString();
     }
 }
-
-

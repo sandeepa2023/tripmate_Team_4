@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, MountainIcon, UserIcon, LogOut } from 'lucide-react';
+import { Menu, Mountain, User, LogOut } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/context/AuthContext';
 import { useState, useRef, useEffect } from "react";
@@ -70,6 +70,9 @@ export default function Header() {
         </>
       ) : (
         <>
+          <Link to="/create-trip" className="text-sm font-medium hover:text-primary">
+            Create Trip
+          </Link>
           <Link to="/dashboard"><Button variant="ghost" size="sm">Dashboard</Button></Link>
           <Link to="/features"><Button variant="ghost" size="sm">Premium</Button></Link>
           <div className="relative" ref={dropdownRef}>
@@ -79,7 +82,7 @@ export default function Header() {
               className="flex items-center gap-1"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             >
-              <UserIcon className="h-4 w-4" /> Account
+              <User className="h-4 w-4" /> Account
             </Button>
             <ul className={`absolute right-0 mt-2 w-40 bg-card shadow-lg rounded border ${
               isDropdownOpen ? 'block' : 'hidden'
@@ -90,7 +93,7 @@ export default function Header() {
                   className="flex items-center gap-2 px-4 py-2 hover:bg-accent/10"
                   onClick={() => setIsDropdownOpen(false)}
                 >
-                  <UserIcon className="h-4 w-4" /> Profile
+                  <User className="h-4 w-4" /> Profile
                 </Link>
               </li>
               <li>
@@ -122,7 +125,7 @@ export default function Header() {
       <SheetContent side="right">
         <div className="grid gap-4 p-4">
           <Link to="/" className="flex items-center gap-2 font-semibold text-lg text-primary">
-            <MountainIcon className="h-6 w-6 text-primary" />
+            <Mountain className="h-6 w-6 text-primary" />
             <span>TripMate</span>
           </Link>
           {navItems.map(item => (
@@ -140,18 +143,19 @@ export default function Header() {
             </>
           ) : (
             <>
+              <Link to="/create-trip" className="text-sm font-medium hover:text-primary">
+                Create Trip
+              </Link>
               <Link to="/dashboard"><Button variant="outline" className="w-full">Dashboard</Button></Link>
               <Link to="/features"><Button variant="outline" className="w-full">Premium</Button></Link>
               <Link to="/account">
                 <Button variant="outline" className="w-full flex items-center gap-2">
-                  <UserIcon className="h-4 w-4" /> Account
+                  <User className="h-4 w-4" /> Account
                 </Button>
               </Link>
-              <button onClick={logout}>
-                <Button variant="outline" className="w-full flex items-center gap-2">
-                  <LogOut className="h-4 w-4" /> Sign Out
-                </Button>
-              </button>
+              <Button variant="outline" className="w-full flex items-center gap-2" onClick={logout}>
+                <LogOut className="h-4 w-4" /> Sign Out
+              </Button>
             </>
           )}
         </div>
@@ -163,7 +167,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <Link to="/" className="flex items-center gap-2">
-          <MountainIcon className="h-6 w-6 text-primary" />
+          <Mountain className="h-6 w-6 text-primary" />
           <span className="font-semibold text-lg text-primary">TripMate</span>
         </Link>
         {isMobile === undefined ? null : isMobile ? <MobileNav /> : <DesktopNav />}

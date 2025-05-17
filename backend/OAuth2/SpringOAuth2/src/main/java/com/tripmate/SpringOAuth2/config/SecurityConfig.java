@@ -30,6 +30,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
             .authorizeHttpRequests(requests -> requests
+                .requestMatchers("register", "login", "/oauth2/**").permitAll() // Allow access to these endpoints without authentication
                 .anyRequest().authenticated()
             )
             .formLogin(Customizer.withDefaults())
@@ -70,9 +71,9 @@ public class SecurityConfig {
         return provider;
     }
 
-    // @Bean
-    // public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-    //     return config.getAuthenticationManager();
-    // }
-
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+ 
 }

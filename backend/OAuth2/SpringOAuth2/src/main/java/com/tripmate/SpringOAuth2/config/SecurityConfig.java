@@ -46,26 +46,6 @@ public class SecurityConfig {
             .build();
     }
 
-    // @Bean 
-    // public UserDetailsService userDetailsService(){
-
-    //     UserDetails user1 = User
-    //         .withDefaultPasswordEncoder()
-    //         .username("gaya")
-    //         .password("1111")
-    //         .roles("USER")
-    //         .build();
-
-            
-    //     UserDetails user2 = User
-    //         .withDefaultPasswordEncoder()
-    //         .username("kithmina")
-    //         .password("2222")
-    //         .roles("ADMIN")
-    //         .build();            
-    //     return new InMemoryUserDetailsManager(user1,user2);
-    // }
-
 
     @Bean 
     public AuthenticationProvider authenticationProvider(){

@@ -13,6 +13,10 @@ import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import DashboardPage from '@/pages/DashboardPage';
 import FeaturesPage from '@/pages/FeaturesPage';
 import AccountPage from '@/pages/AccountPage';
+import SigiriyaPage from '@/pages/destinations/Sigiriya';
+import EllaPage from '@/pages/destinations/Ella';
+import MirissaPage from '@/pages/destinations/Mirissa';
+import KandyPage from './pages/destinations/Kandy';   
 
 export default function App() {
   return (
@@ -25,6 +29,13 @@ export default function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<HomePage />} />
+            {/* Add more destination routes as needed */}
+            {/* Auth Routes */}
+            <Route path="/destinations/sigiriya" element={<SigiriyaPage />} />
+            <Route path="/destinations/ella" element={<EllaPage />} />
+            <Route path="/destinations/mirissa" element={<MirissaPage />} />
+            <Route path="/destinations/kandy" element={<KandyPage />} />
+
             <Route element={<AuthLayout />}>
               <Route path="/auth/signin" element={<SignInPage />} />
               <Route path="/auth/signup" element={<SignUpPage />} />

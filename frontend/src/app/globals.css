@@ -105,13 +105,46 @@
   * {
     @apply border-border;
   }
+
+  html,
   body {
-    @apply bg-background text-foreground font-[--font-geist-sans] antialiased;
+    padding: 0 !important;
+    margin: 0 !important;
   }
-  h1, h2, h3, h4, h5, h6 {
-    @apply text-primary; /* Apply blue color to headers by default */
+
+  :root {
+    --removed-body-scroll-bar-size: 0px;
   }
-  code, kbd, samp, pre {
-    font-family: var(--font-geist-mono), monospace;
+
+  html {
+    overflow-y: scroll !important;
+    scrollbar-gutter: stable !important;
+    margin-right: 0 !important;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    overflow-y: scroll !important;
+    margin-right: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* Prevent scroll lock from radix-ui */
+  body[style*="overflow: hidden"] {
+    overflow-y: scroll !important;
+    margin-right: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* Fix dropdown positioning */
+  [data-radix-popper-content-wrapper] {
+    position: fixed !important;
+    z-index: 50;
+    overflow: visible !important;
+  }
+
+  /* Simple regular select styles */
+  select {
+    @apply w-full p-2 rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary;
   }
 }

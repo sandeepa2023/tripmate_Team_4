@@ -5,79 +5,109 @@ import { MoveRight } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 const destinations = [
-  {
-    name: "Sigiriya",
-    description: "Ascend the ancient rock fortress with breathtaking views.",
-    image: "https://picsum.photos/seed/sigiriya/600/400",
-    aiHint: "Sigiriya rock"
-  },
-  {
-    name: "Ella",
-    description: "Explore lush tea plantations and stunning mountain landscapes.",
-    image: "https://picsum.photos/seed/ella/600/400",
-    aiHint: "Ella SriLanka"
-  },
-  {
-    name: "Mirissa",
-    description: "Relax on golden beaches and go whale watching.",
-    image: "https://picsum.photos/seed/mirissa/600/400",
-    aiHint: "Mirissa beach"
-  },
-  {
-    name: "Kandy",
-    description: "Visit the Temple of the Tooth Relic in this cultural heartland.",
-    image: "https://picsum.photos/seed/kandy/600/400",
-    aiHint: "Kandy temple"
-  },
+	{
+		name: "Sigiriya",
+		description: "Ascend the ancient rock fortress with breathtaking views.",
+		image: "/destinations/Sigiriya/cover.jpg",
+		aiHint: "Sigiriya rock",
+		path: "/destinations/sigiriya", // Add this path
+	},
+	{
+		name: "Ella",
+		description:
+			"Explore lush tea plantations and stunning mountain landscapes.",
+		image: "/destinations/Ella/cover.jpg",
+		aiHint: "Ella SriLanka",
+		path: "/destinations/ella", // Add this path
+	},
+	{
+		name: "Mirissa",
+		description: "Relax on golden beaches and go whale watching.",
+		image: "/destinations/Mirissa/cover.jpg",
+		aiHint: "Mirissa beach",
+		path: "/destinations/mirissa", // Add this path
+	},
+	{
+		name: "Kandy",
+		description:
+			"Visit the Temple of the Tooth Relic in this cultural heartland.",
+		image: "/destinations/Kandy/cover.webp",
+		aiHint: "Kandy temple",
+		path: "/destinations/kandy", // Add this path
+	},
 ];
 
 export default function DestinationsSection() {
-  const { isAuthenticated } = useAuth();
+	const { isAuthenticated } = useAuth();
 
-  return (
-    <section id="destinations" className="w-full py-16 md:py-24 lg:py-32 bg-muted/50">
-      <div className="container mx-auto px-4 md:px-6">
-        <div className="text-center space-y-4 mb-12">
-          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-primary">
-            Explore Enchanting Sri Lanka
-          </h2>
-          <p className="max-w-[700px] mx-auto text-muted-foreground md:text-xl/relaxed">
-            From ancient cities to pristine beaches, Sri Lanka offers diverse experiences.
-          </p>
-        </div>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {destinations.map((destination) => (
-            <Card key={destination.name} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group">
-              <div className="relative h-60 w-full">
-                <img // Changed from next/image
-                  src={destination.image}
-                  alt={destination.name}
-                  className="group-hover:scale-105 transition-transform duration-300 object-cover w-full h-full" // Added object-cover, w-full, h-full
-                  data-ai-hint={destination.aiHint}
-                />
-              </div>
-              <CardContent className="p-4">
-                <h3 className="text-xl font-semibold mb-1 text-foreground">{destination.name}</h3>
-                <p className="text-sm text-muted-foreground">{destination.description}</p>
-              </CardContent>
-              <CardFooter className="p-4 pt-0">
-                 <Button variant="link" className="p-0 h-auto text-primary hover:text-accent" asChild>
-                    <Link to={`/destinations/${destination.name.toLowerCase()}`}> {/* Example link, adjust as needed */}
-                        Learn More <MoveRight className="ml-1 h-4 w-4" />
-                    </Link>
-                 </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-        <div className="text-center mt-12">
-          <Link to={isAuthenticated ? "/dashboard" : "/auth/signup"}>
-            <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground shadow-md">
-              {isAuthenticated ? "Plan Your Trip" : "Discover More Destinations"}
-            </Button>
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
+	return (
+		<section
+			id="destinations"
+			className="w-full py-16 md:py-24 lg:py-32 bg-muted/50"
+		>
+			<div className="container mx-auto px-4 md:px-6">
+				<div className="text-center space-y-4 mb-12">
+					<h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-primary">
+						Explore Enchanting Sri Lanka
+					</h2>
+					<p className="max-w-[700px] mx-auto text-muted-foreground md:text-xl/relaxed">
+						From ancient cities to pristine beaches, Sri Lanka offers
+						diverse experiences.
+					</p>
+				</div>
+				<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+					{destinations.map((destination) => (
+						<Card
+							key={destination.name}
+							className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group"
+						>
+							<div className="relative h-60 w-full">
+								<img
+									// Changed from next/image
+									src={destination.image}
+									alt={destination.name}
+									className="group-hover:scale-105 transition-transform duration-300 object-cover w-full h-full" // Added object-cover, w-full, h-full
+									data-ai-hint={destination.aiHint}
+								/>
+							</div>
+							<CardContent className="p-4">
+								<h3 className="text-xl font-semibold mb-1 text-foreground">
+									{destination.name}
+								</h3>
+								<p className="text-sm text-muted-foreground">
+									{destination.description}
+								</p>
+							</CardContent>
+							<CardFooter className="p-4 pt-0">
+								<Button
+									variant="link"
+									className="p-0 h-auto text-primary hover:text-accent"
+									asChild
+								>
+									<Link to={destination.path}>
+										{" "}
+										{/* Example link, adjust as needed */}
+										Learn More{" "}
+										<MoveRight className="ml-1 h-4 w-4" />
+									</Link>
+								</Button>
+							</CardFooter>
+						</Card>
+					))}
+				</div>
+				<div className="text-center mt-12">
+					<Link to={isAuthenticated ? "/dashboard" : "/auth/signup"}>
+						<Button
+							size="lg"
+							className="bg-accent hover:bg-accent/90 text-accent-foreground shadow-md"
+						>
+							{isAuthenticated
+								? "Plan Your Trip"
+								: "Discover More Destinations"}
+						</Button>
+					</Link>
+				</div>
+			</div>
+		</section>
+	);
 }

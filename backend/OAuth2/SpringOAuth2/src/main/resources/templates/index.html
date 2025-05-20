@@ -1,0 +1,65 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Visualization</title>
+    <link rel="stylesheet" href="/css/index.css">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBB30oPm6hU9NQXNUpHJJzSuEj1ZRerrj8&callback=initMap" defer></script>
+    <script>
+      // Initialize and add the map
+      let map;
+      let markers = [];
+      
+      async function initMap() {
+        // Center of map (average of your locations)
+        const center = { lat: 18.9047, lng: 72.8777 };
+        
+        // Create the map
+        map = new google.maps.Map(document.getElementById("map_div"), {
+          zoom: 9,
+          center: center,
+          mapTypeId: "roadmap", // Options: roadmap, satellite, hybrid, terrain
+        });
+        
+        // Add markers
+        const locations = [
+          {lat: 19.0760, lng: 72.8777, name: 'Mumbai'},
+          {lat: 18.5204, lng: 73.8567, name: 'Pune'},
+          {lat: 19.1176, lng: 72.9060, name: 'Powai'},
+        ];
+        
+        locations.forEach(location => {
+          const marker = new google.maps.Marker({
+            position: {lat: location.lat, lng: location.lng},
+            map: map,
+            title: location.name
+          });
+          
+          // Add info window to each marker
+          const infowindow = new google.maps.InfoWindow({
+            content: `<div><strong>${location.name}</strong></div>`
+          });
+          
+          marker.addListener("click", () => {
+            infowindow.open({
+              anchor: marker,
+              map,
+            });
+          });
+          
+          markers.push(marker);
+        });
+      }
+    </script>
+    <style>
+      .map-container {
+        height: 500px;
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="map_div" class="map-container"></div>
+  </body>
+</html>

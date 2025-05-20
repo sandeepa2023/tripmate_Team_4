@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>TripMate - Trip Map</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 300px;
+            background-color: #f5f5f5;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .map-container {
+            flex-grow: 1;
+            position: relative;
+        }
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        .trip-details {
+            margin-bottom: 20px;
+        }
+        .trip-details p {
+            margin: 5px 0;
+        }
+        .attraction-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .attraction-list li {
+            padding: 8px;
+            margin-bottom: 5px;
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+        .attraction-list li:hover {
+            background-color: #e9f7ef;
+        }
+        .nav-button {
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            background-color: #555;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <a href="/home" class="nav-button">← Back to Home</a>
+        
+        <div class="trip-details">
+            <h2>Trip Details</h2>
+            <p><strong>From:</strong> <span th:text="${trip.startLocation}"></span></p>
+            <p th:if="${!trip.stops.empty}"><strong>Via:</strong> <span th:text="${#strings.listJoin(trip.stops, ', ')}"></span></p>
+            <p><strong>To:</strong> <span th:text="${trip.endLocation}"></span></p>
+            <p><strong>Travelers:</strong> <span th:text="${trip.numberOfTravelers}"></span></p>
+            <p><strong>Dates:</strong> <span th:text="${trip.startDate}"></span> to <span th:text="${trip.endDate}"></span></p>
+            <p><strong>Budget:</strong> $<span th:text="${trip.budget}"></span></p>
+        </div>
+        
+        <h3>Recommended Attractions</h3>
+        <ul class="attraction-list" id="attractionList">
+            <li th:each="attraction : ${attractions}" 
+                th:text="${attraction}" 
+                th:attr="data-name=${attraction}"
+                onclick="searchAttraction(this.getAttribute('data-name'))"></li>
+        </ul>
+    </div>
+    
+    <div class="map-container">
+        <div id="map"></div>
+    </div>
+    
+    <script th:inline="javascript">
+        // Trip data from server
+        const trip = {
+            startLocation: /*[[${trip.startLocation}]]*/ 'Origin',
+            stops: /*[[${trip.stops}]]*/ [],
+            endLocation: /*[[${trip.endLocation}]]*/ 'Destination',
+        };
+        
+        const attractions = /*[[${attractions}]]*/ [];
+        let map;
+        let directionsService;
+        let directionsRenderer;
+        let markers = [];
+        
+        function initMap() {
+            // Create map
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 10,
+                center: { lat: 0, lng: 0 }, // Will be updated once geocoding completes
+            });
+            
+            // Initialize directions service
+            directionsService = new google.maps.DirectionsService();
+            directionsRenderer = new google.maps.DirectionsRenderer({
+                map: map,
+                suppressMarkers: true // We'll create custom markers
+            });
+            
+            // Display the route
+            calculateAndDisplayRoute();
+            
+            // Display attractions as markers
+            attractions.forEach(attraction => {
+                geocodeAndAddMarker(attraction);
+            });
+        }
+        
+        function calculateAndDisplayRoute() {
+            const waypoints = trip.stops.map(stop => ({
+                location: stop,
+                stopover: true
+            }));
+            
+            directionsService.route({
+                origin: trip.startLocation,
+                destination: trip.endLocation,
+                waypoints: waypoints,
+                travelMode: google.maps.TravelMode.DRIVING
+            }, (response, status) => {
+                if (status === 'OK') {
+                    directionsRenderer.setDirections(response);
+                    
+                    // Add markers for start and end locations
+                    const leg = response.routes[0].legs[0];
+                    addMarker(leg.start_location, trip.startLocation, 'Start');
+                    addMarker(leg.end_location, trip.endLocation, 'End');
+                    
+                    // Add markers for stops
+                    if (waypoints.length > 0) {
+                        response.routes[0].legs.slice(1).forEach((leg, i) => {
+                            addMarker(leg.start_location, trip.stops[i], 'Stop ' + (i + 1));
+                        });
+                    }
+                    
+                    // Fit map bounds to include all points
+                    const bounds = new google.maps.LatLngBounds();
+                    response.routes[0].legs.forEach(leg => {
+                        bounds.extend(leg.start_location);
+                        bounds.extend(leg.end_location);
+                    });
+                    map.fitBounds(bounds);
+                } else {
+                    console.error('Directions request failed due to ' + status);
+                }
+            });
+        }
+        
+        function addMarker(position, title, label) {
+            const marker = new google.maps.Marker({
+                position: position,
+                map: map,
+                title: title,
+                label: label
+            });
+            
+            const infoWindow = new google.maps.InfoWindow({
+                content: title
+            });
+            
+            marker.addListener('click', () => {
+                infoWindow.open(map, marker);
+            });
+            
+            markers.push(marker);
+        }
+        
+        function geocodeAndAddMarker(attractionName) {
+            const geocoder = new google.maps.Geocoder();
+            
+            // Geocode the attraction name along with destination for better results
+            const address = attractionName + ', ' + trip.endLocation;
+            
+            geocoder.geocode({ address: address }, (results, status) => {
+                if (status === 'OK' && results[0]) {
+                    const marker = new google.maps.Marker({
+                        map: map,
+                        position: results[0].geometry.location,
+                        title: attractionName,
+                        icon: {
+                            url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+                        }
+                    });
+                    
+                    const infoWindow = new google.maps.InfoWindow({
+                        content: `<h3>${attractionName}</h3>`
+                    });
+                    
+                    marker.addListener('click', () => {
+                        infoWindow.open(map, marker);
+                    });
+                    
+                    markers.push(marker);
+                } else {
+                    console.error('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        }
+        
+        function searchAttraction(attractionName) {
+            const searchAddress = attractionName + ', ' + trip.endLocation;
+            
+            // Center map on the attraction
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ address: searchAddress }, (results, status) => {
+                if (status === 'OK' && results[0]) {
+                    map.setCenter(results[0].geometry.location);
+                    map.setZoom(15);
+                    
+                    // Find if we already have a marker for this attraction
+                    const existingMarker = markers.find(m => m.getTitle() === attractionName);
+                    
+                    if (existingMarker) {
+                        // Trigger a click on the marker to show info window
+                        google.maps.event.trigger(existingMarker, 'click');
+                    } else {
+                        // Create a new marker
+                        geocodeAndAddMarker(attractionName);
+                    }
+                }
+            });
+        }
+    </script>
+    <script th:src="@{'https://maps.googleapis.com/maps/api/js?key=' + ${apiKey} + '&callback=initMap'}" async defer></script>
+</body>
+</html>

@@ -25,11 +25,13 @@ export default function FinalCallToActionSection() {
             ? "Return to your dashboard to continue planning your perfect Sri Lankan adventure."
             : "Let TripMate be your trusted companion in crafting an unforgettable Sri Lankan journey. Sign up today and start planning your adventure!"}
         </p>
-        <Link to={isAuthenticated ? "/dashboard" : "/auth/signup"}>
+        <a href={isAuthenticated ? "/dashboard" : "/auth/signup"}>
+        {/* <Link to={isAuthenticated ? "/dashboard" : "/auth/signup"}> */}
           <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground shadow-lg transform hover:scale-105 transition-transform duration-200 px-10 py-6 text-lg">
             {isAuthenticated ? "Go to Dashboard" : "Start Your Sri Lankan Adventure"}
           </Button>
-        </Link>
+          </a>
+        {/* </Link> */}
       </div>
     </section>
   );

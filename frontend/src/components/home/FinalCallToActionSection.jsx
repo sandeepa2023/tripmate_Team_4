@@ -28,7 +28,7 @@ export default function FinalCallToActionSection() {
         <a href={isAuthenticated ? "/dashboard" : "/auth/signup"}>
         {/* <Link to={isAuthenticated ? "/dashboard" : "/auth/signup"}> */}
           <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground shadow-lg transform hover:scale-105 transition-transform duration-200 px-10 py-6 text-lg">
-            {isAuthenticated ? "Go to Dashboard" : "Start Your Sri Lankan Adventure"}
+            {isAuthenticated ? "Plan Your Trip" : "Start Your Sri Lankan Adventure"}
           </Button>
           </a>
         {/* </Link> */}

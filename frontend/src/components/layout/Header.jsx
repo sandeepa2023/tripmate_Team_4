@@ -73,7 +73,7 @@ export default function Header() {
           {/* <Link to="/create-trip" className="text-sm font-medium hover:text-primary">
             Create Trip
           </Link> */}
-          <Link to="/dashboard"><Button variant="ghost" size="sm">Dashboard</Button></Link>
+          <Link to="/dashboard"><Button variant="ghost" size="sm">Plan Your Trip</Button></Link>
           <Link to="/features"><Button variant="ghost" size="sm">Your Trips</Button></Link>
           <div className="relative" ref={dropdownRef}>
             <Button 

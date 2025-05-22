@@ -80,7 +80,7 @@ export default function TripPlannerCard() {
               ) : (
                 <>
                   <Send className="h-5 w-5 mr-2" />
-                  Get Plan
+                Plan Your Trip
                 </>
               )}
             </Button>

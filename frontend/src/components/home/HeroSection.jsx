@@ -24,7 +24,7 @@ export default function HeroSection() {
             {/* <Link to={isAuthenticated ? "/dashboard" : "/auth/signup"}> */}
               <a href={isAuthenticated ? "/dashboard" : "/auth/signup"}>
               <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
-                {isAuthenticated ? "Go to Dashboard" : "Start Planning for Free"}
+                {isAuthenticated ? "Plan Your Trip" : "Start Planning for Free"}
               </Button>
             {/* </Link> */}
             </a>

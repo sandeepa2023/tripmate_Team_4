@@ -61,6 +61,7 @@ export default function DestinationsSection() {
 							key={destination.name}
 							className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group"
 						>
+							<a href={destination.path}>
 							<div className="relative h-60 w-full">
 								<img
 									// Changed from next/image
@@ -72,7 +73,8 @@ export default function DestinationsSection() {
 							</div>
 							<CardContent className="p-4">
 								<h3 className="text-xl font-semibold mb-1 text-foreground">
-									{destination.name}
+									{/* {destination.name} */}
+									<a href={destination.path}>{destination.name}</a>
 								</h3>
 								<p className="text-sm text-muted-foreground">
 									{destination.description}
@@ -83,15 +85,13 @@ export default function DestinationsSection() {
 									variant="link"
 									className="p-0 h-auto text-primary hover:text-accent"
 									asChild
-								>
-									<Link to={destination.path}>
-										{" "}
-										{/* Example link, adjust as needed */}
-										Learn More{" "}
-										<MoveRight className="ml-1 h-4 w-4" />
-									</Link>
+								>									
+								
+								<a href={destination.path}>Learn More</a>
+								
 								</Button>
 							</CardFooter>
+							</a>
 						</Card>
 					))}
 				</div>

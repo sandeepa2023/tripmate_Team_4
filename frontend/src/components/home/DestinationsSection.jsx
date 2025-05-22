@@ -96,7 +96,8 @@ export default function DestinationsSection() {
 					))}
 				</div>
 				<div className="text-center mt-12">
-					<Link to={isAuthenticated ? "/dashboard" : "/auth/signup"}>
+					<a href={isAuthenticated ? "/dashboard" : "/auth/signup"}>
+					{/* <Link to={isAuthenticated ? "/dashboard" : "/auth/signup"}> */}
 						<Button
 							size="lg"
 							className="bg-accent hover:bg-accent/90 text-accent-foreground shadow-md"
@@ -105,7 +106,8 @@ export default function DestinationsSection() {
 								? "Plan Your Trip"
 								: "Discover More Destinations"}
 						</Button>
-					</Link>
+					{/* </Link> */}
+					</a>
 				</div>
 			</div>
 		</section>

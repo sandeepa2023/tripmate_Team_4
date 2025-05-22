@@ -20,11 +20,15 @@ export default function HeroSection() {
             Plan your dream Sri Lankan getaway in minutes. Get personalized itineraries, discover hidden gems, and explore the island like never before.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-            <Link to={isAuthenticated ? "/dashboard" : "/auth/signup"}>
+            
+            {/* <Link to={isAuthenticated ? "/dashboard" : "/auth/signup"}> */}
+              <a href={isAuthenticated ? "/dashboard" : "/auth/signup"}>
               <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
                 {isAuthenticated ? "Go to Dashboard" : "Start Planning for Free"}
               </Button>
-            </Link>
+            {/* </Link> */}
+            </a>
+            
             <HashLink smooth to="/#how-it-works">
               <Button size="lg" variant="outline" className="hover:bg-primary/10">
                 Learn More

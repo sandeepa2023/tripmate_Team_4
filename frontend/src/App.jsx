@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { Toaster } from '@/components/ui/toaster';
+import ChatBubble from '@/components/chatbot/ChatBubble';
 import { useRef, useState } from 'react';
 import { ScrollContext } from '@/context/ScrollContext';
 import { ConfigProvider, theme } from 'antd';
@@ -80,6 +81,7 @@ export default function App() {
         <Footer />
       </div>
       <Toaster />
+      <ChatBubble />
     </ScrollContext.Provider>
   );
 }

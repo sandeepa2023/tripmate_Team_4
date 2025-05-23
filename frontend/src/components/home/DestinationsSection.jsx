@@ -13,6 +13,13 @@ const destinations = [
 		path: "/destinations/sigiriya", // Add this path
 	},
 	{
+		name: "Weligama",
+		description: "Enjoying the sea breeze with spellbinding memories",
+		image: "/destinations/Weligama/weligama.jpg",
+		aiHint: "Weligama beach",
+		path: "/destinations/weligama", // Add this path
+	},
+	{
 		name: "Ella",
 		description:
 			"Explore lush tea plantations and stunning mountain landscapes.",
@@ -28,12 +35,35 @@ const destinations = [
 		path: "/destinations/mirissa", // Add this path
 	},
 	{
+		name: "Colombo",
+		description: "Colombo blends colonial charm with modern vibrancy, offering bustling markets, serene temples, and coastal beauty. It's a city of captivating contrasts.",
+		image: "/destinations/Colombo/cover.jpg",
+		aiHint: "colombo city",
+		path: "/destinations/colombo", // Add this path
+	},
+	{
 		name: "Kandy",
 		description:
 			"Visit the Temple of the Tooth Relic in this cultural heartland.",
 		image: "/destinations/Kandy/cover.webp",
 		aiHint: "Kandy temple",
 		path: "/destinations/kandy", // Add this path
+	},
+	{
+		name: "Yala",
+		description:
+			"Visit the nature life of Sri lanka",
+		image: "/destinations/Yala/lepcov.jpg",
+		aiHint: "Yala park",
+		path: "/destinations/yala", // Add this path
+	},
+	{
+		name: "Polonnaruwa",
+		description:
+			"Journey through ancient Polonnaruwa's sacred grounds",
+		image: "/destinations/Polonnaruwa/cover.JPG",
+		aiHint: "Polonnaruwa",
+		path: "/destinations/polonnaruwa", // Add this path
 	},
 ];
 

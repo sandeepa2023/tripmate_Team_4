@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -6,6 +6,7 @@ import { Menu, Mountain, User, LogOut } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/context/AuthContext';
 import { useState, useRef, useEffect } from "react";
+import { useScroll } from '@/context/ScrollContext';
 
 const navItems = [
   { label: 'Features', href: '/#features', isHash: true },
@@ -19,6 +20,8 @@ export default function Header() {
   const { isAuthenticated, logout } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
+  const { scrollToTop } = useScroll();
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -30,6 +33,12 @@ export default function Header() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  const handleLogoClick = (e) => {
+    e.preventDefault();
+    navigate('/', { replace: true });
+    scrollToTop();
+  };
 
   const NavLink = ({ item }) => {
     if (item.isHash) {
@@ -73,7 +82,7 @@ export default function Header() {
           {/* <Link to="/create-trip" className="text-sm font-medium hover:text-primary">
             Create Trip
           </Link> */}
-          <Link to="/dashboard"><Button variant="ghost" size="sm">Plan Your Trip</Button></Link>
+          <Link to="/dashboard"><Button variant="ghost" size="sm">Dashboard</Button></Link>
           <Link to="/features"><Button variant="ghost" size="sm">Your Trips</Button></Link>
           <div className="relative" ref={dropdownRef}>
             <Button 
@@ -124,9 +133,9 @@ export default function Header() {
       </SheetTrigger>
       <SheetContent side="right">
         <div className="grid gap-4 p-4">
-          <Link to="/" className="flex items-center gap-2 font-semibold text-lg text-primary">
+          <Link to="/" className="flex items-center gap-2" onClick={handleLogoClick}>
             <Mountain className="h-6 w-6 text-primary" />
-            <span>TripMate</span>
+            <span className="font-semibold text-lg text-primary">TripMate</span>
           </Link>
           {navItems.map(item => (
             <NavLink key={item.label} item={item} />
@@ -166,7 +175,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2" onClick={handleLogoClick}>
           <Mountain className="h-6 w-6 text-primary" />
           <span className="font-semibold text-lg text-primary">TripMate</span>
         </Link>

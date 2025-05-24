@@ -148,3 +148,80 @@
     @apply w-full p-2 rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary;
   }
 }
+
+/* Blob animation */
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* Enhanced shadow animation */
+@keyframes shadow-pulse {
+  0% {
+    opacity: 0.4;
+    transform: scale(1) translate(0, 0);
+  }
+  25% {
+    opacity: 0.6;
+    transform: scale(1.05) translate(10px, -10px);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1) translate(0, 0);
+  }
+  75% {
+    opacity: 0.6;
+    transform: scale(1.05) translate(-10px, 10px);
+  }
+  100% {
+    opacity: 0.4;
+    transform: scale(1) translate(0, 0);
+  }
+}
+
+.animate-shadow-pulse {
+  animation: shadow-pulse 6s ease-in-out infinite;
+}
+
+.animation-delay-1000 {
+  animation-delay: 1s;
+}
+
+/* Glow effect */
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 20px rgba(52, 152, 219, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(52, 152, 219, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(52, 152, 219, 0.2);
+  }
+}
+
+.animate-glow {
+  animation: glow 4s ease-in-out infinite;
+}

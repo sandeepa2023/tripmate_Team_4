@@ -30,7 +30,7 @@ export default function HeroSection() {
       setCurrentImageIndex((prevIndex) => 
         prevIndex === images.length - 1 ? 0 : prevIndex + 1
       );
-    }, 10000); // Changed from 5000 to 8000 (8 seconds)
+    }, 10000);
 
     return () => clearInterval(timer);
   }, []);

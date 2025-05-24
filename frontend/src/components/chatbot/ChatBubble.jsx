@@ -24,13 +24,15 @@ const ChatBubble = () => {
     setInput('');
     setIsLoading(true);
 
+    const user_message = input; // Store user message for processing
+
     try {
       // Here you would integrate with your AI backend
       // This is a placeholder response
       setTimeout(() => {
         const aiResponse = { 
           role: 'system', 
-          content: `Thanks for your message about "${currentInput}". I'm your TripMate assistant and would be happy to help with information about Sri Lanka's destinations and travel tips.`
+          content: `Thanks for your message about "${input}". I'm your TripMate assistant and would be happy to help with information about Sri Lanka's destinations and travel tips.`
         };
         setMessages(prev => [...prev, aiResponse]);
         setIsLoading(false);

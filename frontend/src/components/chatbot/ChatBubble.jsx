@@ -32,7 +32,7 @@ const ChatBubble = () => {
       setTimeout(() => {
         const aiResponse = { 
           role: 'system', 
-          content: `Thanks for your message about "${input}". I'm your TripMate assistant and would be happy to help with information about Sri Lanka's destinations and travel tips.`
+          content: `Thanks for your message about "${user_message}". I'm your TripMate assistant and would be happy to help with information about Sri Lanka's destinations and travel tips.`
         };
         setMessages(prev => [...prev, aiResponse]);
         setIsLoading(false);

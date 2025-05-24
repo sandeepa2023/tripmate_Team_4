@@ -14,29 +14,33 @@ const ChatBubble = () => {
 
   const toggleChat = () => setIsOpen(!isOpen);
 
-  const handleSendMessage = async (e) => {
-    e.preventDefault();
-    if (!input.trim()) return;
+
 
     // Add user message
-    const userMessage = { role: 'user', content: input };
-    setMessages(prev => [...prev, userMessage]);
-    setInput('');
-    setIsLoading(true);
-
-    const user_message = input; // Store user message for processing
-
-    try {
-      // Here you would integrate with your AI backend
-      // This is a placeholder response
-      setTimeout(() => {
-        const aiResponse = { 
-          role: 'system', 
-          content: `Thanks for your message about "${user_message}". I'm your TripMate assistant and would be happy to help with information about Sri Lanka's destinations and travel tips.`
-        };
-        setMessages(prev => [...prev, aiResponse]);
-        setIsLoading(false);
-      }, 1000);
+    const handleSendMessage = async (e) => {
+      e.preventDefault();
+      if (!input.trim()) return;
+    
+      // Store user message before resetting input
+      const userMessage = { role: 'user', content: input };
+      const messageContent = input.trim(); // Store for API processing
+      
+      // Add user message to state
+      setMessages(prev => [...prev, userMessage]);
+      setInput('');
+      setIsLoading(true);
+    
+      try {
+        // Here you would integrate with your AI backend
+        // This is a placeholder response
+        setTimeout(() => {
+          const aiResponse = { 
+            role: 'system', 
+            content: `Thanks for your message about "${messageContent}". I'm your TripMate assistant and would be happy to help with information about Sri Lanka's destinations and travel tips.`
+          };
+          setMessages(prev => [...prev, aiResponse]);
+          setIsLoading(false);
+        }, 1000);
       
       // Replace the above with your actual API call:
       // const response = await fetch('/api/chat', {

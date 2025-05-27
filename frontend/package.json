@@ -46,6 +46,7 @@
     "dayjs": "^1.11.13",
     "dotenv": "^16.5.0",
     "firebase": "^11.7.0",
+    "framer-motion": "^12.12.2",
     "genkit": "^1.8.0",
     "lucide-react": "^0.475.0",
     "patch-package": "^8.0.0",

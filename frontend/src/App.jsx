@@ -25,6 +25,7 @@ import MirissaPage from '@/pages/destinations/Mirissa';
 import ColomboPage from '@/pages/destinations/Colombo';
 import KandyPage from './pages/destinations/Kandy';
 import PolonnaruwaPage from '@/pages/destinations/Polonnaruwa';
+import Planner from './pages/Planner';
 
 
 export default function App() {
@@ -75,6 +76,10 @@ export default function App() {
             <Route
               path="/account"
               element={<ProtectedRoute><AccountPage /></ProtectedRoute>}
+            />
+            <Route
+              path="/planner"
+              element={<Planner />}
             />
           </Routes>
         </main>

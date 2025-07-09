@@ -12,6 +12,7 @@ const navItems = [
   { label: 'Features', href: '/#features', isHash: true },
   { label: 'How it Works', href: '/#how-it-works', isHash: true },
   { label: 'Destinations', href: '/#destinations', isHash: true },
+  { label: 'Business', href: '/business', isHash: false },
   { label: 'Blog', href: '/blog', isHash: false },
 ];
 

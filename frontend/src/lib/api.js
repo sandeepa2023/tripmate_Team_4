@@ -67,6 +67,10 @@ export const API_ENDPOINTS = {
   chat: {
     send: '/api/chat',
   },
+  // Trip planning
+  trip: {
+    plan: '/api/trip/plan',
+  },
 };
 
 // Helper functions for common API calls
@@ -94,6 +98,9 @@ export const api = {
   deleteBusiness: (id) => fetch(`${API_BASE_URL}${API_ENDPOINTS.business.delete(id)}`, {
     method: 'DELETE',
   }),
+  
+  // Trip planning
+  planTrip: (tripData) => apiClient.post(API_ENDPOINTS.trip.plan, tripData),
 };
 
 // OAuth URL helpers

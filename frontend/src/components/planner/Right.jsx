@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { API_BASE_URL } from "@/lib/api";
 
 function Right({ start, end, setStart, setEnd, attractions, onReplan }) {
   const [days, setDays] = useState('');
@@ -38,7 +39,7 @@ function Right({ start, end, setStart, setEnd, attractions, onReplan }) {
 
     try {
       // Call backend API
-      const response = await fetch('http://localhost:8080/api/trip/plan', {
+      const response = await fetch(`${API_BASE_URL}/api/trip/plan`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

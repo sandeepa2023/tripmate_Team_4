@@ -83,7 +83,7 @@ export default function App() {
             />
             <Route
               path="/planner"
-              element={<Planner />}
+              element={<ProtectedRoute><Planner /></ProtectedRoute>}
             />
           </Routes>
         </main>

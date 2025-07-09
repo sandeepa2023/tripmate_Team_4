@@ -14,6 +14,7 @@ import {
   MapIcon,
   Lightbulb,
 } from "lucide-react";
+import { api } from '@/lib/api';
 
 const Planner = () => {
   const [start, setStart] = useState("");
@@ -426,19 +427,13 @@ const Planner = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:8080/api/trip/plan", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestData),
-      });
-
-      if (!response.ok) {
+      const response = await api.planTrip(requestData);
+      
+      if (!response.data) {
         throw new Error("Failed to generate trip plan");
       }
 
-      const results = await response.json();
+      const results = response.data;
       console.log(results);
       setItinerary(results.itineraryText);
 

@@ -15,6 +15,7 @@ const Planner = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [activeStep, setActiveStep] = useState(1);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
   
   const mapRef = useRef(null);
   const googleMapRef = useRef(null);
@@ -38,6 +39,7 @@ const Planner = () => {
 
   const onMapLoad = (map) => {
     googleMapRef.current = map;
+    setIsMapLoaded(true);
   };
 
   const geocodePlace = (place, callback) => {
@@ -150,6 +152,11 @@ const Planner = () => {
   const handleFindRoute = () => {
     if (!start || !end) {
       setError('Please enter both start and end locations');
+      return;
+    }
+
+    if (!window.google) {
+      setError('Google Maps is not loaded yet. Please try again.');
       return;
     }
 
@@ -272,11 +279,162 @@ const Planner = () => {
       const script = document.createElement('script');
       script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}&libraries=places`;
       script.async = true;
+      script.onload = () => {
+        // Initialize map after script loads
+        if (mapRef.current) {
+          const map = new window.google.maps.Map(mapRef.current, {
+            center: center,
+            zoom: 7,
+            restriction: { latLngBounds: sriLankaBounds, strictBounds: false },
+            styles: [
+              {
+                "featureType": "all",
+                "elementType": "geometry",
+                "stylers": [{"color": "#1d2c4d"}]
+              },
+              {
+                "featureType": "all",
+                "elementType": "labels.text.fill",
+                "stylers": [{"color": "#8ec3b9"}]
+              },
+              {
+                "featureType": "all",
+                "elementType": "labels.text.stroke",
+                "stylers": [{"color": "#1a3646"}]
+              },
+              {
+                "featureType": "administrative.country",
+                "elementType": "geometry.stroke",
+                "stylers": [{"color": "#4b6878"}]
+              },
+              {
+                "featureType": "landscape",
+                "elementType": "geometry",
+                "stylers": [{"color": "#2c5a85"}]
+              },
+              {
+                "featureType": "road",
+                "elementType": "geometry",
+                "stylers": [{"color": "#34495e"}]
+              },
+              {
+                "featureType": "water",
+                "elementType": "geometry",
+                "stylers": [{"color": "#0e1626"}]
+              }
+            ]
+          });
+          onMapLoad(map);
+        }
+      };
       document.head.appendChild(script);
+    } else {
+      // Google Maps is already loaded
+      if (mapRef.current && !googleMapRef.current) {
+        const map = new window.google.maps.Map(mapRef.current, {
+          center: center,
+          zoom: 7,
+          restriction: { latLngBounds: sriLankaBounds, strictBounds: false },
+        });
+        onMapLoad(map);
+      }
     }
   }, []);
 
+  // Update map when directions change
+  useEffect(() => {
+    if (directions && googleMapRef.current && window.google) {
+      const directionsRenderer = new window.google.maps.DirectionsRenderer({
+        polylineOptions: {
+          strokeColor: "#f97316",
+          strokeWeight: 4,
+          strokeOpacity: 0.8
+        }
+      });
+      directionsRenderer.setMap(googleMapRef.current);
+      directionsRenderer.setDirections(directions);
+    }
+  }, [directions]);
+
+  // Update markers when attractions change
+  useEffect(() => {
+    if (attractions.length > 0 && googleMapRef.current && window.google) {
+      // Clear existing markers (you might want to keep track of them)
+      attractions.forEach((place) => {
+        const marker = new window.google.maps.Marker({
+          position: place.geometry.location,
+          map: googleMapRef.current,
+          title: place.name,
+          icon: {
+            url: "https://maps.google.com/mapfiles/ms/icons/orange-dot.png",
+          }
+        });
+      });
+    }
+  }, [attractions]);
+
   const stepProgress = activeStep === 1 ? 33 : activeStep === 2 ? 66 : 100;
+
+  // Format itinerary text with proper styling
+  const formatItinerary = (text) => {
+    if (!text) return null;
+    
+    const sections = text.split('\n').map((line, index) => {
+      // Headers (lines starting with **)
+      if (line.startsWith('**') && line.endsWith('**')) {
+        return (
+          <h3 key={index} className="text-lg font-bold text-orange-300 mt-4 mb-2 flex items-center">
+            <Sparkles className="h-5 w-5 mr-2" />
+            {line.replace(/\*\*/g, '')}
+          </h3>
+        );
+      }
+      
+      // Day headers
+      if (line.startsWith('*') && line.includes('Day')) {
+        return (
+          <h4 key={index} className="text-md font-semibold text-blue-300 mt-3 mb-2 flex items-center">
+            <Calendar className="h-4 w-4 mr-2" />
+            {line.replace(/\*/g, '')}
+          </h4>
+        );
+      }
+      
+      // Bullet points
+      if (line.trim().startsWith('*')) {
+        return (
+          <div key={index} className="ml-4 mb-1 flex items-start">
+            <span className="text-orange-400 mr-2 mt-1">•</span>
+            <span className="text-gray-200">{line.replace(/^\s*\*\s*/, '')}</span>
+          </div>
+        );
+      }
+      
+      // Time stamps
+      if (line.match(/^\d{1,2}:\d{2}\s*(AM|PM)/)) {
+        return (
+          <div key={index} className="ml-6 mb-1 flex items-start">
+            <Clock className="h-4 w-4 mr-2 mt-0.5 text-green-400" />
+            <span className="text-gray-200">{line}</span>
+          </div>
+        );
+      }
+      
+      // Empty lines
+      if (line.trim() === '') {
+        return <div key={index} className="mb-2"></div>;
+      }
+      
+      // Regular text
+      return (
+        <p key={index} className="text-gray-200 mb-2 leading-relaxed">
+          {line}
+        </p>
+      );
+    });
+    
+    return sections;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white">
@@ -422,7 +580,7 @@ const Planner = () => {
                 <div className="flex gap-3">
                   <button
                     onClick={handleFindRoute}
-                    disabled={!start || !end}
+                    disabled={!start || !end || !isMapLoaded}
                     className="flex-1 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 disabled:from-gray-600 disabled:to-gray-500 text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center disabled:cursor-not-allowed"
                   >
                     <Route className="h-5 w-5 mr-2" />
@@ -473,10 +631,10 @@ const Planner = () => {
                   <Sparkles className="h-6 w-6 mr-2" />
                   AI Travel Insights
                 </h3>
-                <div className="bg-gray-700/50 rounded-lg p-4 max-h-96 overflow-y-auto">
-                  <pre className="text-sm text-gray-200 whitespace-pre-wrap font-mono leading-relaxed">
-                    {itinerary}
-                  </pre>
+                <div className="bg-gray-700/50 rounded-lg p-6 max-h-96 overflow-y-auto">
+                  <div className="text-sm leading-relaxed">
+                    {formatItinerary(itinerary)}
+                  </div>
                 </div>
               </div>
             )}
@@ -489,83 +647,11 @@ const Planner = () => {
               Your Journey Map
             </h3>
             <div className="bg-gray-700 rounded-lg overflow-hidden">
-              <div id="map" style={containerStyle}>
-                {typeof window !== 'undefined' && window.google && (
-                  <div style={containerStyle}>
-                    <div ref={mapRef} style={containerStyle} className="rounded-lg">
-                      <GoogleMap
-                        mapContainerStyle={containerStyle}
-                        center={center}
-                        zoom={7}
-                        onLoad={onMapLoad}
-                        options={{
-                          restriction: { latLngBounds: sriLankaBounds, strictBounds: false },
-                          styles: [
-                            {
-                              "featureType": "all",
-                              "elementType": "geometry",
-                              "stylers": [{"color": "#1d2c4d"}]
-                            },
-                            {
-                              "featureType": "all",
-                              "elementType": "labels.text.fill",
-                              "stylers": [{"color": "#8ec3b9"}]
-                            },
-                            {
-                              "featureType": "all",
-                              "elementType": "labels.text.stroke",
-                              "stylers": [{"color": "#1a3646"}]
-                            },
-                            {
-                              "featureType": "administrative.country",
-                              "elementType": "geometry.stroke",
-                              "stylers": [{"color": "#4b6878"}]
-                            },
-                            {
-                              "featureType": "landscape",
-                              "elementType": "geometry",
-                              "stylers": [{"color": "#2c5a85"}]
-                            },
-                            {
-                              "featureType": "road",
-                              "elementType": "geometry",
-                              "stylers": [{"color": "#34495e"}]
-                            },
-                            {
-                              "featureType": "water",
-                              "elementType": "geometry",
-                              "stylers": [{"color": "#0e1626"}]
-                            }
-                          ]
-                        }}
-                      >
-                        {directions && (
-                          <DirectionsRenderer
-                            directions={directions}
-                            options={{
-                              polylineOptions: {
-                                strokeColor: "#f97316",
-                                strokeWeight: 4,
-                                strokeOpacity: 0.8
-                              }
-                            }}
-                          />
-                        )}
-                        {attractions.map((place, idx) => (
-                          <Marker
-                            key={place.place_id || idx}
-                            position={place.geometry.location}
-                            title={place.name}
-                            icon={{
-                              url: "https://maps.google.com/mapfiles/ms/icons/orange-dot.png",
-                            }}
-                          />
-                        ))}
-                      </GoogleMap>
-                    </div>
-                  </div>
-                )}
-              </div>
+              <div 
+                ref={mapRef}
+                style={containerStyle}
+                className="w-full h-full"
+              />
             </div>
           </div>
         </div>
@@ -573,35 +659,5 @@ const Planner = () => {
     </div>
   );
 };
-
-// Mock Google Maps components for the artifact
-const GoogleMap = ({ children, onLoad, mapContainerStyle, center, zoom, options }) => {
-  const mapRef = useRef(null);
-  
-  useEffect(() => {
-    if (onLoad && mapRef.current) {
-      onLoad(mapRef.current);
-    }
-  }, [onLoad]);
-
-  return (
-    <div 
-      ref={mapRef}
-      style={mapContainerStyle} 
-      className="bg-gray-600 rounded-lg flex items-center justify-center"
-    >
-      <div className="text-center text-gray-300">
-        <Navigation className="h-12 w-12 mx-auto mb-4 text-orange-400" />
-        <p className="text-lg font-semibold mb-2">Google Maps Integration</p>
-        <p className="text-sm">Map will load with your Google Maps API key</p>
-        <p className="text-xs mt-2 text-gray-400">Route and attractions will be displayed here</p>
-      </div>
-      {children}
-    </div>
-  );
-};
-
-const DirectionsRenderer = ({ directions, options }) => null;
-const Marker = ({ position, title, icon }) => null;
 
 export default Planner;

@@ -17,17 +17,17 @@ public class PromptBuilder {
         prompt.append("Suggested Places (from route):\n");
         if (request.getCustomPlaces() != null && !request.getCustomPlaces().isEmpty()) {
             for (String place : request.getCustomPlaces()) {
-                prompt.append("- ").append(place).append(" (tourist_attraction)\n");
+                prompt.append(place).append(" (tourist_attraction)\n");
             }
         } else {
             prompt.append("No specific attractions provided; suggest popular ones.\n");
         }
-        prompt.append("\nRespond with:\n");
-        prompt.append("1. DETAILED ITINERARY:\n[Day-by-day plan with activities, timings, and locations]\n\n");
-        prompt.append("2. JSON STRUCTURE:\n```json\n[Structured data with days, activities, costs]\n```\n\n");
-        prompt.append("3. BUDGET BREAKDOWN:\n[Detailed cost analysis]\n\n");
-        prompt.append("4. RECOMMENDED PLACES:\n[List of must-visit locations]\n\n");
-        prompt.append("5. TRAVEL TIPS:\n[Sri Lanka specific advice]");
+        prompt.append("\nRespond with the following sections in plain text, without any markdown, asterisks, bullets, or code blocks. Do not use any bullet points, asterisks, dashes, or bold/italic formatting. Each section must start with its header, followed by plain text content. For lists, simply use newlines, numbered steps, or semicolons if needed, but do not use any symbols like *, -, or .\n\n");
+        prompt.append("1. DETAILED ITINERARY:\nGive the plan as simple numbered steps or time blocks. No bullets or asterisks.\n\n");
+        prompt.append("2. JSON STRUCTURE:\nGive valid JSON, but do NOT wrap it in any code block or markdown. Just the JSON.\n\n");
+        prompt.append("3. BUDGET BREAKDOWN:\nList costs as plain text, do not use any bullets, asterisks, or dashes.\n\n");
+        prompt.append("4. RECOMMENDED PLACES:\nList places plainly, one per line, no symbols.\n\n");
+        prompt.append("5. TRAVEL TIPS:\nList tips as plain text, one per line, no bullets, asterisks, or dashes.\n");
         return prompt.toString();
     }
 }

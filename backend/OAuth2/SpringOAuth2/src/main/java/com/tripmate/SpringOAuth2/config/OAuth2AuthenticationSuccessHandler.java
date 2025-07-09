@@ -19,17 +19,18 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private JWTService jwtService;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, 
-                                      Authentication authentication) throws IOException, ServletException {
-        
-        CustomOAuth2User oauth2User = (CustomOAuth2User) authentication.getPrincipal();
-        
-        // Generate JWT token for the OAuth2 user
-        String token = jwtService.generateToken(oauth2User.getUsername());
-        
-        // Redirect to frontend with token (you can customize this URL)
-        String targetUrl = "/home?token=" + token;
-        
-        getRedirectStrategy().sendRedirect(request, response, targetUrl);
-    }
+public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, 
+                                    Authentication authentication) throws IOException, ServletException {
+    
+    CustomOAuth2User oauth2User = (CustomOAuth2User) authentication.getPrincipal();
+    
+    // Generate JWT token for the OAuth2 user
+    String token = jwtService.generateToken(oauth2User.getUsername());
+    
+    // Redirect to frontend with token (your React app URL)
+    String targetUrl = "http://localhost:9002/?token=" + token;
+    
+    getRedirectStrategy().sendRedirect(request, response, targetUrl);
+}
+
 }

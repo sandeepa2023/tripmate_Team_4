@@ -13,7 +13,7 @@ const navItems = [
   { label: 'How it Works', href: '/#how-it-works', isHash: true },
   { label: 'Destinations', href: '/#destinations', isHash: true },
   { label: 'Business', href: '/business', isHash: false },
-  { label: 'Blog', href: '/blog', isHash: false },
+  // { label: 'Blog', href: '/blog', isHash: false },
 ];
 
 export default function Header() {
@@ -82,9 +82,9 @@ export default function Header() {
         <>
           {/* <Link to="/create-trip" className="text-sm font-medium hover:text-primary">
             Create Trip
-          </Link> */}
+          </Link>
           <Link to="/dashboard"><Button variant="ghost" size="sm">Dashboard</Button></Link>
-          <Link to="/features"><Button variant="ghost" size="sm">Your Trips</Button></Link>
+          <Link to="/features"><Button variant="ghost" size="sm">Your Trips</Button></Link> */}
           <div className="relative" ref={dropdownRef}>
             <Button 
               variant="ghost" 

@@ -12,6 +12,7 @@ import HomePage from '@/pages/HomePage';
 import AuthLayout from '@/pages/auth/AuthLayout';
 import SignInPage from '@/pages/auth/SignInPage';
 import SignUpPage from '@/pages/auth/SignUpPage';
+import OAuthSuccessRedirect from '@/pages/OAuthSuccessRedirect';
 
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import DashboardPage from '@/pages/DashboardPage';
@@ -59,6 +60,7 @@ export default function App() {
             <Route path="/destinations/colombo" element={<ColomboPage />} />
             <Route path="/destinations/kandy" element={<KandyPage />} />
             <Route path="/destinations/polonnaruwa" element={<PolonnaruwaPage />} />
+            <Route path="/oauth-success" element={<OAuthSuccessRedirect />} />
             
 
             <Route element={<AuthLayout />}>

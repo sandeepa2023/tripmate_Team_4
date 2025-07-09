@@ -28,7 +28,8 @@ public void onAuthenticationSuccess(HttpServletRequest request, HttpServletRespo
     String token = jwtService.generateToken(oauth2User.getUsername());
     
     // Redirect to frontend with token (your React app URL)
-    String targetUrl = "http://localhost:9002/?token=" + token;
+    String targetUrl = "http://localhost:9002/oauth-success?token=" + token;
+
     
     getRedirectStrategy().sendRedirect(request, response, targetUrl);
 }

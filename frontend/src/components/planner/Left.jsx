@@ -177,7 +177,7 @@ function Left() {
           
           const request = {
             location: googleLatLng,
-            radius: 8000, // Smaller radius (8km) since we have more search points
+            radius: 20000, // 20km radius
             types: ['tourist_attraction'],
           };
           
@@ -225,6 +225,22 @@ function Left() {
           Find Route
         </button>
         {error && <div style={{ color: "red", marginTop: 4 }}>{error}</div>}
+        
+        {/* Display attraction names */}
+        {attractions.length > 0 && (
+          <div style={{ marginTop: 16, padding: "12px", backgroundColor: "#f5f5f5", borderRadius: "4px" }}>
+            <h3 style={{ margin: "0 0 8px 0", fontSize: "16px", fontWeight: "bold" }}>
+              Attractions Found ({attractions.length}):
+            </h3>
+            <div style={{ fontSize: "14px", lineHeight: "1.4" }}>
+              {attractions.map((place, idx) => (
+                <div key={place.place_id || idx} style={{ marginBottom: "4px" }}>
+                  <span style={{ fontWeight: "500" }}>{idx + 1}. {place.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
       <GoogleMap
         mapContainerStyle={containerStyle}

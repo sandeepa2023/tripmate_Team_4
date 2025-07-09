@@ -18,13 +18,15 @@ const sriLankaBounds = {
   east: 81.9,
 };
 
-function Left() {
-  const [startName, setStartName] = useState("");
-  const [endName, setEndName] = useState("");
+function Left({
+  start, end,
+  setStart, setEnd,
+  directions, setDirections,
+  attractions, setAttractions,
+  routeFinderRef
+}) {
   const [startLoc, setStartLoc] = useState(null);
   const [endLoc, setEndLoc] = useState(null);
-  const [directions, setDirections] = useState(null);
-  const [attractions, setAttractions] = useState([]);
   const [error, setError] = useState("");
   const mapRef = useRef(null);
 
@@ -53,16 +55,16 @@ function Left() {
     setError("");
     setDirections(null);
     setAttractions([]);
-    if (!startName || !endName) {
+    if (!start || !end) {
       setError("Please enter both start and end locations.");
       return;
     }
     // Geocode both places
-    geocodePlace(startName, (startLocResult) => {
+    geocodePlace(start, (startLocResult) => {
       if (!startLocResult) return;
       setStartLoc(startLocResult);
       
-      geocodePlace(endName, (endLocResult) => {
+      geocodePlace(end, (endLocResult) => {
         if (!endLocResult) return;
         setEndLoc(endLocResult);
         
@@ -195,28 +197,34 @@ function Left() {
     }, 500); // 500ms delay
   };
 
-  return (
+  React.useEffect(() => {
+    if (routeFinderRef) {
+      routeFinderRef.current = handleFindRoute;
+    }
+  }, [start, end]);
+
+    return (
     <LoadScript
       googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
       libraries={["places"]}
     >
       <div style={{ marginBottom: 8 }}>
         <label>
-          Start location: {" "}
+          Start location:{" "}
           <input
             type="text"
-            value={startName}
-            onChange={e => setStartName(e.target.value)}
+            value={start}
+            onChange={(e) => setStart(e.target.value)}
             placeholder="e.g. Kandy"
             style={{ marginRight: 8 }}
           />
         </label>
         <label>
-          End location: {" "}
+          End location:{" "}
           <input
             type="text"
-            value={endName}
-            onChange={e => setEndName(e.target.value)}
+            value={end}
+            onChange={(e) => setEnd(e.target.value)}
             placeholder="e.g. Colombo"
             style={{ marginRight: 8 }}
           />

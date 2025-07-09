@@ -1,5 +1,7 @@
 package com.tripmate.SpringOAuth2.models;
 
+import java.util.List;
+
 public class TripRequest {
     private String start;
     private String end;
@@ -7,6 +9,7 @@ public class TripRequest {
     private int people;
     private int budget;
     private String notes;
+    private List<String> customPlaces;
 
     // Getters and Setters
     public String getStart() { return start; }
@@ -26,4 +29,11 @@ public class TripRequest {
 
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
+
+    public List<String> getCustomPlaces() {
+        return customPlaces;
+    }
+    public void setCustomPlaces(List<String> customPlaces) {
+        this.customPlaces = customPlaces;
+    }
 }

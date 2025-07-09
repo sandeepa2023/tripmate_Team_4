@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from "react";
+import { fetchGemmaResponse } from "../../lib/api";
+import { set } from "date-fns";
 
-function Right() {
-  const [start, setStart] = useState('');
-  const [end, setEnd] = useState('');
+function Right({ start, end, setStart, setEnd, onReplan }) {
   const [days, setDays] = useState('');
   const [people, setPeople] = useState('');
   const [budget, setBudget] = useState('');
@@ -25,22 +25,25 @@ function Right() {
       Prompt: ${prompt}
     `;
 
-    try {
-      // Replace this with actual API call to Gemma 3 27B backend
-      const response = await fetch('/api/gemma', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: inputMessage })
-      });
+    // try {
+    //   const response = await fetch('/api/gemma', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({ prompt: inputMessage })
+    //   });
 
-      const result = await response.json();
-      setOutput(result);
-    } catch (error) {
-      console.error('Error:', error);
-      setOutput({ error: 'Something went wrong.' });
-    } finally {
-      setIsLoading(false);
-    }
+    //   const result = await response.json();
+    //   setOutput(result);
+    // } catch (error) {
+    //   console.error('Error:', error);
+    //   setOutput({ error: 'Something went wrong.' });
+    // } finally {
+    //   setIsLoading(false);
+    // }
+
+    const results = await fetchGemmaResponse(inputMessage);
+    setOutput(results);
+    setIsLoading(false);
   };
 
   return (
@@ -66,16 +69,30 @@ function Right() {
         <input type="number" value={budget} onChange={e => setBudget(e.target.value)} className="w-full border rounded px-3 py-2" />
       </div>
       <div>
-        <label className="block text-sm font-semibold">Trip Prompt (personalized info)</label>
+        <label className="block text-sm font-semibold">Trip Prompt</label>
         <textarea value={prompt} onChange={e => setPrompt(e.target.value)} rows={4} className="w-full border rounded px-3 py-2" />
         <p className="text-xs text-right text-gray-500">Token count: {tokenCount}</p>
       </div>
 
-      <button onClick={handleSubmit} disabled={isLoading} className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">
-        {isLoading ? 'Planning trip...' : 'Generate Plan'}
-      </button>
+      <div className="flex gap-2">
+        <button
+          onClick={handleSubmit}
+          disabled={isLoading}
+          className="flex-1 bg-green-500 text-white py-2 rounded hover:bg-green-600"
+        >
+          {isLoading ? 'Planning trip...' : 'Generate Plan'}
+        </button>
 
-      {isLoading && <div className="text-center text-blue-500 animate-pulse">🧠 AI is planning your trip...</div>}
+        <button
+          onClick={onReplan}
+          disabled={!start || !end}
+          className="flex-1 bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+        >
+          Replan Route
+        </button>
+      </div>
+
+      {isLoading && <div className="text-center text-blue-500 animate-pulse"> AI is planning your trip...</div>}
 
       {output && (
         <div className="mt-4 border-t pt-4 space-y-2">

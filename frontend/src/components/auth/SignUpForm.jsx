@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
-import { Github, Chrome } from 'lucide-react';
+import { Github, Chrome, Loader2 } from 'lucide-react';
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: 'Full name must be at least 2 characters.' }),
@@ -28,29 +28,74 @@ export default function SignUpForm() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = React.useState(false);
   
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: { fullName: '', email: '', password: '' },
   });
 
-  async function onSubmit() {
+  async function onSubmit(values) {
+    setIsLoading(true);
     try {
-      // stub: simulate successful sign-up
-      login();
+      const response = await fetch('http://localhost:8080/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: values.email, // Using email as username
+          password: values.password,
+          email: values.email,
+          name: values.fullName
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Registration failed');
+      }
+
+      const data = await response.json();
+      
+      // If registration returns token and user data, login immediately
+      if (data.token) {
+        login(data.token, data.user);
+      } else {
+        // If no token returned, just show success and redirect to signin
+        toast({ 
+          title: 'Account Created!',
+          description: 'Please sign in with your new account.'
+        });
+        navigate('/auth/signin');
+        return;
+      }
+      
       toast({ 
         title: 'Welcome to TripMate!',
         description: 'Your account has been created successfully.'
       });
-      navigate('/'); // Changed from /dashboard to /
+      navigate('/');
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'Failed to create account. Please try again.',
+        description: error.message || 'Failed to create account. Please try again.',
         variant: 'destructive'
       });
+    } finally {
+      setIsLoading(false);
     }
   }
+
+  const handleGoogleSignUp = () => {
+    // Redirect to Google OAuth endpoint
+    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+  };
+
+  const handleGithubSignUp = () => {
+    // Redirect to GitHub OAuth endpoint
+    window.location.href = 'http://localhost:8080/oauth2/authorization/github';
+  };
 
   return (
     <Card className="w-full max-w-md shadow-xl">
@@ -68,7 +113,7 @@ export default function SignUpForm() {
                 <FormItem>
                   <FormLabel>Full Name</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Your Name" />
+                    <Input {...field} placeholder="Your Name" disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -81,7 +126,7 @@ export default function SignUpForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="you@example.com" />
+                    <Input {...field} placeholder="you@example.com" disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -94,14 +139,25 @@ export default function SignUpForm() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input {...field} type="password" placeholder="••••••••" />
+                    <Input {...field} type="password" placeholder="••••••••" disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
-              Sign Up
+            <Button 
+              type="submit" 
+              className="w-full bg-accent hover:bg-accent/90 text-accent-foreground"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating Account...
+                </>
+              ) : (
+                'Sign Up'
+              )}
             </Button>
           </form>
         </Form>
@@ -112,8 +168,20 @@ export default function SignUpForm() {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <Button variant="outline"><Chrome className="mr-2 h-4 w-4" /> Google</Button>
-          <Button variant="outline"><Github className="mr-2 h-4 w-4" /> GitHub</Button>
+          <Button 
+            variant="outline" 
+            onClick={handleGoogleSignUp}
+            disabled={isLoading}
+          >
+            <Chrome className="mr-2 h-4 w-4" /> Google
+          </Button>
+          <Button 
+            variant="outline" 
+            onClick={handleGithubSignUp}
+            disabled={isLoading}
+          >
+            <Github className="mr-2 h-4 w-4" /> GitHub
+          </Button>
         </div>
       </CardContent>
       <CardFooter className="justify-center">

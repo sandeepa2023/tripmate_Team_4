@@ -28,38 +28,20 @@ function Left() {
   const [error, setError] = useState("");
   const mapRef = useRef(null);
 
-  console.log('=== Left component render ===');
-  console.log('Current attractions state:', attractions);
-  console.log('Attractions length:', attractions.length);
-  console.log('Directions state:', directions);
-  console.log('Error state:', error);
-
   const onMapLoad = (map) => {
-    console.log('=== Map loaded ===');
-    console.log('Map instance:', map);
     mapRef.current = map;
-    console.log('mapRef.current set to:', mapRef.current);
   };
 
   // Geocode a place name to lat/lng
   const geocodePlace = (place, callback) => {
-    console.log('=== geocodePlace called ===');
-    console.log('Place to geocode:', place);
-    console.log('Google available:', !!window.google);
-    
     if (!window.google) {
-      console.log('Google not available, returning');
       return;
     }
     const geocoder = new window.google.maps.Geocoder();
     geocoder.geocode({ address: place }, (results, status) => {
-      console.log('Geocoding results for', place, ':', results);
-      console.log('Geocoding status:', status);
       if (status === "OK" && results[0]) {
-        console.log('Geocoding successful, location:', results[0].geometry.location);
         callback(results[0].geometry.location);
       } else {
-        console.log('Geocoding failed for', place, 'with status:', status);
         setError(`Could not geocode: ${place}`);
         callback(null);
       }
@@ -68,33 +50,23 @@ function Left() {
 
   // Find route and attractions
   const handleFindRoute = () => {
-    console.log('=== handleFindRoute called ===');
-    console.log('Start name:', startName);
-    console.log('End name:', endName);
-    
     setError("");
     setDirections(null);
     setAttractions([]);
     if (!startName || !endName) {
-      console.log('Missing start or end location');
       setError("Please enter both start and end locations.");
       return;
     }
     // Geocode both places
-    console.log('Starting geocoding for start location:', startName);
     geocodePlace(startName, (startLocResult) => {
-      console.log('Start location geocoded:', startLocResult);
       if (!startLocResult) return;
       setStartLoc(startLocResult);
       
-      console.log('Starting geocoding for end location:', endName);
       geocodePlace(endName, (endLocResult) => {
-        console.log('End location geocoded:', endLocResult);
         if (!endLocResult) return;
         setEndLoc(endLocResult);
         
         // Get directions
-        console.log('Getting directions from', startLocResult, 'to', endLocResult);
         const directionsService = new window.google.maps.DirectionsService();
         directionsService.route(
           {
@@ -103,16 +75,11 @@ function Left() {
             travelMode: window.google.maps.TravelMode.DRIVING,
           },
           (result, status) => {
-            console.log('Directions result:', result);
-            console.log('Directions status:', status);
             if (status === "OK") {
               setDirections(result);
-              console.log('Route overview path:', result.routes[0].overview_path);
-              console.log('Overview path length:', result.routes[0].overview_path.length);
               // Find attractions along the route
               findAttractions(result.routes[0].overview_path);
             } else {
-              console.log('Directions failed with status:', status);
               setError("Could not find route.");
             }
           }
@@ -123,25 +90,14 @@ function Left() {
 
   // Find attractions along the route using Places API
   const findAttractions = (path) => {
-    console.log('=== findAttractions called ===');
-    console.log('Path received:', path);
-    console.log('Path length:', path?.length);
-    console.log('mapRef.current:', mapRef.current);
-    console.log('window.google:', !!window.google);
-    console.log('window.google.maps.places:', !!window.google?.maps?.places);
-    
     if (!mapRef.current || !window.google) {
-      console.log('Map or Google not ready');
       return;
     }
     
     // Add a small delay to ensure map is fully ready
     setTimeout(() => {
-      console.log('Creating PlacesService after delay...');
-      
       try {
         const placesService = new window.google.maps.places.PlacesService(mapRef.current);
-        console.log('PlacesService created:', placesService);
         
         // Create search points every 20-30 path points to get better coverage
         const searchPoints = [];
@@ -156,18 +112,14 @@ function Left() {
           searchPoints.push(path[path.length - 1]);
         }
         
-        console.log(`Searching at ${searchPoints.length} points along the route (every ${stepSize} path points)`);
-        
         let allAttractions = [];
         let completedSearches = 0;
         
         // Function to handle each search result
         const handleSearchResult = (results, status, pointIndex) => {
           completedSearches++;
-          console.log(`Search ${completedSearches}/${searchPoints.length} completed for point ${pointIndex}`);
           
           if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
-            console.log(`Found ${results.length} attractions at point ${pointIndex}`);
             // Filter out duplicates based on place_id and also filter by distance to route
             const newAttractions = results.filter(place => {
               // Check if this place is already in our list
@@ -203,24 +155,14 @@ function Left() {
             }));
             
             allAttractions = [...allAttractions, ...ratedAttractions];
-            console.log(`Added ${newAttractions.length} new attractions. Total unique attractions so far: ${allAttractions.length}`);
           }
           
           // If all searches are complete, update the state
           if (completedSearches === searchPoints.length) {
-            console.log('All searches completed. Processing final results...');
-            
             // Sort by priority (rating + review count) and limit to 15
             const sortedAttractions = allAttractions
               .sort((a, b) => (b.priority || 0) - (a.priority || 0))
               .slice(0, 15); // Limit to maximum 15 attractions
-            
-            console.log(`Filtered from ${allAttractions.length} to ${sortedAttractions.length} top attractions`);
-            console.log('Final attractions:', sortedAttractions.map(a => ({ 
-              name: a.name, 
-              rating: a.rating, 
-              reviews: a.user_ratings_total 
-            })));
             
             setAttractions(sortedAttractions);
           }
@@ -228,8 +170,6 @@ function Left() {
         
         // Search at each point along the route
         searchPoints.forEach((point, index) => {
-          console.log(`Starting search ${index + 1}/${searchPoints.length} at point:`, point);
-          
           const googleLatLng = new window.google.maps.LatLng(
             typeof point.lat === 'function' ? point.lat() : point.lat,
             typeof point.lng === 'function' ? point.lng() : point.lng
@@ -294,21 +234,16 @@ function Left() {
         options={{ restriction: { latLngBounds: sriLankaBounds, strictBounds: false } }}
       >
         {directions && <DirectionsRenderer directions={directions} />}
-        {attractions.map((place, idx) => {
-          console.log('Rendering marker for place:', place);
-          console.log('Place geometry:', place.geometry);
-          console.log('Place location:', place.geometry?.location);
-          return (
-            <Marker
-              key={place.place_id || idx}
-              position={place.geometry.location}
-              title={place.name}
-              icon={{
-                url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-              }}
-            />
-          );
-        })}
+        {attractions.map((place, idx) => (
+          <Marker
+            key={place.place_id || idx}
+            position={place.geometry.location}
+            title={place.name}
+            icon={{
+              url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+            }}
+          />
+        ))}
       </GoogleMap>
     </LoadScript>
   );

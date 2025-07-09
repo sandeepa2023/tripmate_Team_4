@@ -438,22 +438,6 @@ const Planner = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-orange-600 to-orange-500 shadow-2xl">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Navigation className="h-8 w-8 text-white" />
-              <h1 className="text-2xl font-bold text-white">Sri Lankan Travel Planner</h1>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Sparkles className="h-6 w-6 text-yellow-300" />
-              <span className="text-sm font-medium">AI-Powered Journey</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Progress Bar */}
       <div className="bg-gray-800 px-6 py-3">
         <div className="container mx-auto">

@@ -143,18 +143,20 @@ function Left() {
         const placesService = new window.google.maps.places.PlacesService(mapRef.current);
         console.log('PlacesService created:', placesService);
         
-        // Instead of just searching at midpoint, search at multiple points along the route
+        // Create search points every 20-30 path points to get better coverage
         const searchPoints = [];
-        const numSearchPoints = 5; // Search at 5 points along the route
+        const stepSize = Math.max(1, Math.floor(path.length / 15)); // About 15 search points for better coverage
         
-        for (let i = 0; i < numSearchPoints; i++) {
-          const index = Math.floor((path.length / numSearchPoints) * i);
-          if (index < path.length) {
-            searchPoints.push(path[index]);
-          }
+        for (let i = 0; i < path.length; i += stepSize) {
+          searchPoints.push(path[i]);
         }
         
-        console.log(`Searching at ${searchPoints.length} points along the route`);
+        // Also add the last point if not already included
+        if (searchPoints[searchPoints.length - 1] !== path[path.length - 1]) {
+          searchPoints.push(path[path.length - 1]);
+        }
+        
+        console.log(`Searching at ${searchPoints.length} points along the route (every ${stepSize} path points)`);
         
         let allAttractions = [];
         let completedSearches = 0;
@@ -166,18 +168,61 @@ function Left() {
           
           if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
             console.log(`Found ${results.length} attractions at point ${pointIndex}`);
-            // Filter out duplicates based on place_id
-            const newAttractions = results.filter(place => 
-              !allAttractions.some(existing => existing.place_id === place.place_id)
-            );
-            allAttractions = [...allAttractions, ...newAttractions];
-            console.log(`Total unique attractions so far: ${allAttractions.length}`);
+            // Filter out duplicates based on place_id and also filter by distance to route
+            const newAttractions = results.filter(place => {
+              // Check if this place is already in our list
+              const isDuplicate = allAttractions.some(existing => existing.place_id === place.place_id);
+              if (isDuplicate) return false;
+              
+              // Check if the place is reasonably close to the route path
+              const placeLocation = place.geometry.location;
+              const placeLat = typeof placeLocation.lat === 'function' ? placeLocation.lat() : placeLocation.lat;
+              const placeLng = typeof placeLocation.lng === 'function' ? placeLocation.lng() : placeLocation.lng;
+              
+              // Check if place is within reasonable distance of any point on the route
+              const isNearRoute = path.some(pathPoint => {
+                const pathLat = typeof pathPoint.lat === 'function' ? pathPoint.lat() : pathPoint.lat;
+                const pathLng = typeof pathPoint.lng === 'function' ? pathPoint.lng() : pathPoint.lng;
+                
+                // Calculate rough distance (not precise but good enough for filtering)
+                const latDiff = Math.abs(placeLat - pathLat);
+                const lngDiff = Math.abs(placeLng - pathLng);
+                const roughDistance = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
+                
+                // If within roughly 0.08 degrees (~9km), consider it near the route
+                return roughDistance < 0.08;
+              });
+              
+              return isNearRoute;
+            });
+            
+            // Add rating-based sorting - prioritize higher rated attractions
+            const ratedAttractions = newAttractions.map(place => ({
+              ...place,
+              priority: (place.rating || 3) + (place.user_ratings_total || 0) / 1000 // Rating + review count factor
+            }));
+            
+            allAttractions = [...allAttractions, ...ratedAttractions];
+            console.log(`Added ${newAttractions.length} new attractions. Total unique attractions so far: ${allAttractions.length}`);
           }
           
           // If all searches are complete, update the state
           if (completedSearches === searchPoints.length) {
-            console.log('All searches completed. Setting final attractions:', allAttractions);
-            setAttractions(allAttractions);
+            console.log('All searches completed. Processing final results...');
+            
+            // Sort by priority (rating + review count) and limit to 15
+            const sortedAttractions = allAttractions
+              .sort((a, b) => (b.priority || 0) - (a.priority || 0))
+              .slice(0, 15); // Limit to maximum 15 attractions
+            
+            console.log(`Filtered from ${allAttractions.length} to ${sortedAttractions.length} top attractions`);
+            console.log('Final attractions:', sortedAttractions.map(a => ({ 
+              name: a.name, 
+              rating: a.rating, 
+              reviews: a.user_ratings_total 
+            })));
+            
+            setAttractions(sortedAttractions);
           }
         };
         
@@ -192,7 +237,7 @@ function Left() {
           
           const request = {
             location: googleLatLng,
-            radius: 15000, // Reduced radius to 15km to avoid too much overlap
+            radius: 8000, // Smaller radius (8km) since we have more search points
             types: ['tourist_attraction'],
           };
           
@@ -201,7 +246,7 @@ function Left() {
             placesService.nearbySearch(request, (results, status) => {
               handleSearchResult(results, status, index);
             });
-          }, index * 200); // 200ms delay between each request
+          }, index * 150); // 150ms delay between each request
         });
         
       } catch (serviceError) {

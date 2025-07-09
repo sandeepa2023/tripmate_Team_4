@@ -109,7 +109,7 @@ function Left() {
 
   return (
     <LoadScript
-      googleMapsApiKey="AIzaSyBDOlZoeR_niLOtxeUdgar-w9R6bkAArvg"
+      googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
       libraries={["places"]}
     >
       <div style={{ marginBottom: 8 }}>

@@ -27,6 +27,7 @@ import ColomboPage from '@/pages/destinations/Colombo';
 import KandyPage from './pages/destinations/Kandy';
 import PolonnaruwaPage from '@/pages/destinations/Polonnaruwa';
 import Planner from './pages/Planner';
+import BusinessPage from './pages/BusinessPage';
 
 
 export default function App() {
@@ -61,6 +62,7 @@ export default function App() {
             <Route path="/destinations/kandy" element={<KandyPage />} />
             <Route path="/destinations/polonnaruwa" element={<PolonnaruwaPage />} />
             <Route path="/oauth-success" element={<OAuthSuccessRedirect />} />
+            <Route path="/business" element={<BusinessPage/>}/>
             
 
             <Route element={<AuthLayout />}>

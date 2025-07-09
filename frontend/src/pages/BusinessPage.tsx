@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Building2, Mail, Phone, Globe, MapPin, Tag, Trash2, Plus } from 'lucide-react';
-
-const BASE_URL = 'http://localhost:8080/api/business';
+import { api } from '@/lib/api';
 
 const BusinessPage = () => {
   const [form, setForm] = useState({
@@ -20,7 +19,7 @@ const BusinessPage = () => {
   const fetchBusinesses = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`${BASE_URL}/all`);
+      const res = await api.getAllBusinesses();
       const data = await res.json();
       if (Array.isArray(data)) {
         setBusinesses(data);
@@ -48,11 +47,7 @@ const BusinessPage = () => {
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`${BASE_URL}/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      });
+      const res = await api.registerBusiness(form);
       const data = await res.json();
 
       if (res.ok) {
@@ -81,7 +76,7 @@ const BusinessPage = () => {
     if (!window.confirm('Delete this business?')) return;
     setIsLoading(true);
     try {
-      await fetch(`${BASE_URL}/${id}`, { method: 'DELETE' });
+      await api.deleteBusiness(id);
       fetchBusinesses();
     } catch (err) {
       alert('Failed to delete');

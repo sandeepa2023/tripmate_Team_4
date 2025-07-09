@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import axios from 'axios';
+import { api } from '@/lib/api';
 
 export default function PasswordSection() {
   const { getAuthHeader } = useAuth();
@@ -27,20 +27,11 @@ export default function PasswordSection() {
     e.preventDefault();
     
     try {
-      const response = await axios.post(
-        'http://localhost:8080/api/profile/change-password',
-        {
-          currentPassword: formData.currentPassword,
-          newPassword: formData.newPassword,
-          confirmPassword: formData.confirmPassword
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            ...getAuthHeader()
-          }
-        }
-      );
+      const response = await api.changePassword({
+        currentPassword: formData.currentPassword,
+        newPassword: formData.newPassword,
+        confirmPassword: formData.confirmPassword
+      });
       
 
       toast({

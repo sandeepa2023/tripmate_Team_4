@@ -17,6 +17,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 import { Github, Chrome, Loader2 } from 'lucide-react';
+import { api, getOAuthUrl } from '@/lib/api';
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: 'Full name must be at least 2 characters.' }),
@@ -38,17 +39,11 @@ export default function SignUpForm() {
   async function onSubmit(values) {
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:8080/api/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: values.email, // Using email as username
-          password: values.password,
-          email: values.email,
-          name: values.fullName
-        }),
+      const response = await api.register({
+        username: values.email, // Using email as username
+        password: values.password,
+        email: values.email,
+        name: values.fullName
       });
 
       if (!response.ok) {
@@ -89,12 +84,12 @@ export default function SignUpForm() {
 
   const handleGoogleSignUp = () => {
     // Redirect to Google OAuth endpoint
-    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    window.location.href = getOAuthUrl('google');
   };
 
   const handleGithubSignUp = () => {
     // Redirect to GitHub OAuth endpoint
-    window.location.href = 'http://localhost:8080/oauth2/authorization/github';
+    window.location.href = getOAuthUrl('github');
   };
 
   return (

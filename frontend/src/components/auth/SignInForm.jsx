@@ -17,7 +17,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 import { Github, Chrome, Loader2 } from 'lucide-react';
-import axios from 'axios';
+import { api, getOAuthUrl } from '@/lib/api';
 
 const formSchema = z.object({
   username: z.string().min(1, { message: 'Username is required.' }),
@@ -38,7 +38,7 @@ export default function SignInForm() {
   async function onSubmit(values) {
     setIsLoading(true);
     try {
-      const response = await axios.post('http://localhost:8080/api/login', {
+      const response = await api.login({
         username: values.username,
         password: values.password,
       });
@@ -80,8 +80,7 @@ export default function SignInForm() {
   }
 
   const handleOAuth = (provider) => {
-    const baseUrl = 'http://localhost:8080/oauth2/authorization';
-    window.location.href = `${baseUrl}/${provider}`;
+    window.location.href = getOAuthUrl(provider);
   };
 
   return (

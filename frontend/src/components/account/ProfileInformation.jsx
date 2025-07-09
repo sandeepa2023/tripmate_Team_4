@@ -3,8 +3,8 @@ import { FiUser, FiMail } from 'react-icons/fi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
-import axios from 'axios';
 import { useToast } from '@/hooks/use-toast'; // If you're using a toast system
+import { api } from '@/lib/api';
 
 export default function ProfileInformation({ formData, setFormData, isEditing, setIsEditing }) {
   const { toast } = useToast(); // optional, for user feedback
@@ -21,16 +21,10 @@ export default function ProfileInformation({ formData, setFormData, isEditing, s
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.put('http://localhost:8080/api/profile', {
+      const response = await api.updateProfile({
         name: formData.name,
         email: formData.email,
         profilePictureUrl: formData.profilePictureUrl || ''
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
       });
 
       toast?.({
@@ -52,12 +46,7 @@ export default function ProfileInformation({ formData, setFormData, isEditing, s
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:8080/api/profile', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await api.getProfile();
 
         setFormData({
           name: response.data.name,

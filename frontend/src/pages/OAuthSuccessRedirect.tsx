@@ -15,7 +15,7 @@ export default function OAuthSuccessRedirect() {
       login(token); // this will store token in localStorage via AuthContext
       navigate('/dashboard', { replace: true }); // redirect to protected page
     } else {
-      navigate('/auth/signin'); // fallback if token is missing
+      navigate('/'); // fallback if token is missing
     }
   }, [login, navigate]);
 

@@ -83,6 +83,7 @@ public class ProfileController {
                                           Authentication authentication) {
         try {
             String username = authentication.getName();
+            System.out.println("Changing password for user: " + username);
             
             // Validate input
             if (!changePasswordDto.getNewPassword().equals(changePasswordDto.getConfirmPassword())) {

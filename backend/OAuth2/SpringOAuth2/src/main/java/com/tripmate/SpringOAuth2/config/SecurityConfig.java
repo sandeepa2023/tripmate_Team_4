@@ -16,6 +16,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.tripmate.SpringOAuth2.services.CustomOAuth2UserService;
+import org.springframework.security.config.Customizer;
+
 
 @Configuration
 @EnableWebSecurity
@@ -36,6 +38,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+            .cors(Customizer.withDefaults())
             .authorizeHttpRequests(requests -> requests
                 .requestMatchers("/api/register", "/api/login", "/home", "/oauth2/**", "/css/**", "/js/**", "/images/**", "/error").permitAll() 
                 .anyRequest().authenticated()

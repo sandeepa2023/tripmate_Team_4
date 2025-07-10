@@ -273,29 +273,17 @@ const BusinessPage = () => {
                           </p>
                         )}
 
-                        <div className="flex items-center justify-between gap-2">
-                          {business.website ? (
-                            <a
-                              href={business.website}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex-1 bg-primary/10 hover:bg-primary hover:text-primary-foreground text-primary border border-primary/20 hover:border-primary text-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-1"
-                            >
-                              <Globe className="w-3 h-3" />
-                              Visit Website
-                            </a>
-                          ) : (
-                            <div className="flex-1" />
-                          )}
-                          
-                          <button
-                            onClick={() => handleDelete(business.id)}
-                            className="bg-destructive/10 hover:bg-destructive hover:text-destructive-foreground text-destructive p-2 rounded-lg transition-all duration-200 border border-destructive/20 hover:border-destructive"
-                            title="Delete Business"
+                        {business.website && (
+                          <a
+                            href={business.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full bg-primary/10 hover:bg-primary hover:text-primary-foreground text-primary border border-primary/20 hover:border-primary text-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-1"
                           >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
+                            <Globe className="w-3 h-3" />
+                            Visit Website
+                          </a>
+                        )}
                       </div>
                     </div>
                   ))}
